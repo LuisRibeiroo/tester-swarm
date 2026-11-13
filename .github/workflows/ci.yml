@@ -1,0 +1,56 @@
+name: Monorepo CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  flutter_packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Test Flutter SDK plugin
+        working-directory: packages/sdk-flutter
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+      - name: Analyze and test Hub app
+        working-directory: apps/hub
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+
+  landing_astro:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/landing/package-lock.json
+      - name: Build Astro static site
+        working-directory: apps/landing
+        run: |
+          npm ci
+          npm run build
+
+  supabase_sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify backend migrations and Edge Functions exist
+        run: |
+          test -f backend/supabase/migrations/20261113000001_initial_schema.sql
+          test -f backend/supabase/migrations/20261113000002_rls_and_rpcs.sql
+          test -f backend/supabase/migrations/20261113000003_cron_jobs.sql
+          test -f backend/supabase/seed.sql
+          test -f backend/supabase/functions/sdk-handshake/index.ts
+          test -f backend/supabase/functions/sdk-events/index.ts
