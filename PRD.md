@@ -21,7 +21,7 @@ Na prática, devs independentes enfrentam:
 
 ## 2. Visão do produto
 
-Um **marketplace de troca de testes com verificação real**: o dev ganha **pontos** testando apps de outras pessoas e usa esses pontos para cadastrar o próprio app e receber testadores. Um **SDK leve (Kotlin + plugin Flutter)** embutido no app testado comprova a instalação e o uso, e é ele que libera os pontos.
+Um **marketplace de troca de testes com verificação real**: o dev ganha **pontos** testando apps de outras pessoas e usa esses pontos para cadastrar o próprio app e receber testadores. Um **SDK leve (Kotlin + wrappers Flutter e React Native)** embutido no app testado comprova a instalação e o uso, e é ele que libera os pontos.
 
 **Proposta de valor em uma frase:** *"Consiga seus 12 testadores por 14 dias com prova de uso e feedback real, testando apps de outros devs."*
 
@@ -78,6 +78,7 @@ O app principal é usado tanto por testadores quanto por devs.
 |---|---|---|
 | S1 | **Kotlin/Android:** instalação = 1 dependência + 1 `meta-data` no Manifest. Zero código obrigatório (auto-init). | P0 |
 | S2 | **Plugin Flutter:** `flutter pub add testerloop` + a mesma `meta-data`. Zero código Dart obrigatório. | P0 |
+| S2b | **Wrapper React Native:** `npm install @testerloop/react-native` + a mesma `meta-data`. Zero código JS/TS obrigatório (no-op em iOS/Web). | P0 |
 | S3 | Registrar instalação (origem Play Store), sessões em foreground e dias ativos. | P0 |
 | S4 | Associar o uso ao testador do Hub **sem coletar e-mail nem dados pessoais** no app testado. | P0 |
 | S5 | Leve: < 50 KB, sem dependências pesadas e sem impacto mensurável no startup. | P0 |
@@ -90,7 +91,7 @@ O app principal é usado tanto por testadores quanto por devs.
 |---|---|---|
 | L1 | Home com proposta de valor, como funciona, CTA para o Play Store. | P0 |
 | L2 | Páginas de conteúdo voltadas para busca: "Como conseguir 12 testadores", "Requisito de 14 dias do Google Play explicado", "Teste fechado passo a passo". | P0 |
-| L3 | Docs do SDK (Kotlin e Flutter) com `llms.txt` e `llms-full.txt`. | P0 |
+| L3 | Docs do SDK (Kotlin, Flutter e React Native) com `llms.txt` e `llms-full.txt`. | P0 |
 | L4 | FAQ com `FAQPage` JSON-LD, mais `SoftwareApplication` e `Organization`. | P0 |
 | L5 | i18n **pt-BR + en** no lançamento (o mercado em inglês é muito maior). (OQ-12) | P0 |
 | L6 | Diretório público de apps em teste (páginas indexáveis por app na fase 3, com opt-in do dev). (OQ-13) | P2 |
@@ -188,7 +189,7 @@ Na prática, quem testa **~7 apps em paralelo por 14 dias** (7 × 17 = 119 ponto
 | Fase | Duração estimada | Entregas |
 |---|---|---|
 | **0 — Fundação** | 2 semanas | Backend, auth, modelo de dados, SDK Kotlin v0 (handshake + heartbeat), landing com lista de espera. |
-| **1 — MVP fechado** | 4–6 semanas | Hub Android (H1–H8, H13), plugin Flutter, validação do SDK, economia de pontos, push. Beta com 50–100 devs. |
+| **1 — MVP fechado** | 4–6 semanas | Hub Android (H1–H8, H13), wrappers Flutter e React Native, validação do SDK, economia de pontos, push. Beta com 50–100 devs. |
 | **2 — Lançamento público** | 3–4 semanas | Feedback (H9), relatório (H10), Featured com preço fixo (H11), reputação, landing completa com SEO/AEO e docs, console Flutter Web. |
 | **3 — Escala** | contínuo | Leilão de Featured, diretório público, planos para agências, analytics para devs. |
 

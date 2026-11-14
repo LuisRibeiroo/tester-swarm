@@ -11,7 +11,7 @@
 flowchart LR
   subgraph Device["Dispositivo Android do testador"]
     HUB["App Hub (Flutter)<br/>+ módulo nativo Kotlin<br/>(TokenProvider, PresenceWorker)"]
-    TAPP["App testado<br/>+ TesterLoop SDK (Kotlin ou plugin Flutter)"]
+    TAPP["App testado<br/>+ TesterLoop SDK (Kotlin, Flutter ou React Native)"]
     HUB -- "Intent io.testerloop.action.OPEN<br/>(extra: tracking token)" --> TAPP
     TAPP -- "ContentProvider query<br/>(token ligado ao callingPackage)" --> HUB
   end
@@ -40,6 +40,7 @@ flowchart LR
 | App Hub | Flutter (Android no MVP, Flutter Web para o console na fase 2) | `apps/hub` |
 | SDK Android | Kotlin, AAR no Maven Central | `packages/sdk-android` |
 | Plugin Flutter | Plugin Flutter (só Android, no-op em outras plataformas) no pub.dev | `packages/sdk-flutter` |
+| Wrapper React Native | Pacote React Native (só Android, no-op em iOS/Web) no npm (`@testerloop/react-native`) | `packages/sdk-react-native` |
 | Backend | Supabase self-hosted em VPS (Postgres 15+, Edge Functions Deno/TS, Storage, Auth, pg_cron) | `backend/supabase` |
 | Push | Firebase Cloud Messaging | — |
 | Landing + Docs | Astro (SSG) + Starlight em `/docs` | `apps/landing` |
@@ -53,6 +54,7 @@ testerloop/
 ├─ packages/
 │  ├─ sdk-android/         # Kotlin library (+ sample app)
 │  ├─ sdk-flutter/         # Flutter plugin (+ example/)
+│  ├─ sdk-react-native/    # React Native wrapper (Android autolinking)
 │  └─ shared-contracts/    # JSON Schemas / OpenAPI da API do SDK
 ├─ backend/supabase/
 │  ├─ migrations/
@@ -459,7 +461,7 @@ POST /sdk/v1/handshake
   "installer": "com.android.vending",
   "debuggable": false,
   "installId": "b7e1...-uuid",            // UUID aleatório gerado pelo SDK, persistido
-  "sdk": {"platform":"android","version":"1.0.0","wrapper":"flutter|null"},
+  "sdk": {"platform":"android","version":"1.0.0","wrapper":"flutter|react_native|null"},
   "device": {"sdkInt": 35},
   "token": "<JWT ou null>"
 }
@@ -547,8 +549,9 @@ io.testerloop.sdk
 
 ---
 
-## 6. Plugin Flutter (`testerloop`)
+## 6. Wrappers Multiplataforma: Flutter (`testerloop`) e React Native (`@testerloop/react-native`)
 
+### 6.1 Plugin Flutter (`testerloop`)
 - Plugin **só Android** (`flutter.plugin.platforms.android`). Em iOS/Web/Desktop não registra nada, o que é seguro.
 - `android/build.gradle` declara `implementation("io.testerloop:sdk:<ver>")`. O merge de manifest traz tudo automaticamente.
 - **Nenhum código Dart obrigatório.** A API Dart opcional espelha a nativa via `MethodChannel`:
@@ -559,6 +562,20 @@ abstract final class TesterLoop {
 }
 ```
 - O `example/` serve também de app de teste de integração no CI (instala no emulador e verifica o handshake contra um backend mock).
+
+### 6.2 Wrapper React Native (`@testerloop/react-native`)
+- Pacote **só Android** via autolinking (`react-native.config.js` define `platforms.ios = null` para não registrar pod no iOS). Em iOS e Web, a API JS retorna valores seguros em no-op.
+- `android/build.gradle` declara `implementation("io.testerloop:sdk:<ver>")` e `minSdk = 23`. O Manifest merge injeta `androidx.startup` e `EntryActivity` automaticamente, tanto em React Native CLI quanto em Expo Dev Client (`npx expo prebuild`).
+- **Nenhum código JS/TS obrigatório.** A API opcional em JS/TS espelha a nativa via `NativeModules.TesterLoop`:
+```ts
+export type TesterLoopStatus = 'NOT_ENROLLED' | 'TRACKING' | 'DISABLED';
+
+export const TesterLoop = {
+  status(): Promise<TesterLoopStatus>;
+  setEnabled(enabled: boolean): Promise<void>;
+};
+```
+- O `TesterLoop` nativo detecta automaticamente no classpath `io.testerloop.reactnative.TesterLoopPackage` (enviando `"wrapper": "react_native"`) ou `io.testerloop.flutter.TesterLoopPlugin` (`"wrapper": "flutter"`).
 
 ---
 
@@ -571,7 +588,7 @@ Objetivo: qualquer assistente de IA (Claude, Copilot, Cursor etc.) deve consegui
 2. Blocos de código **completos e copiáveis**, com o caminho do arquivo no título.
 3. Uma seção de **verificação** com o resultado esperado (log `TesterLoop: TRACKING`).
 4. Uma seção "**O que NÃO fazer**" (não chamar `init` duas vezes, não colocar o `appKey` em `strings.xml` se usar flavors etc.).
-5. Publicada em `/docs/sdk/android` e `/docs/sdk/flutter`, agregada em **`/llms.txt`** (índice) e **`/llms-full.txt`** (conteúdo completo em Markdown puro).
+5. Publicada em `/docs/sdk/android`, `/docs/sdk/flutter` e `/docs/sdk/react-native`, agregada em **`/llms.txt`** (índice) e **`/llms-full.txt`** (conteúdo completo em Markdown puro).
 6. O Hub gera um **prompt pronto** com o `appKey` do dev já preenchido: *"Integre o TesterLoop SDK neste projeto seguindo https://…/llms-full.txt. appKey: tl_pk_…"*.
 
 O rascunho do documento está em [`SDK_AI_INSTALL.md`](./SDK_AI_INSTALL.md).
@@ -717,6 +734,7 @@ Regras: só campanhas `recruiting`/`in_progress`. Máximo de 1 booking ativo por
   /guides/google-groups-for-testers
 /docs/sdk/android          Starlight
 /docs/sdk/flutter
+/docs/sdk/react-native
 /llms.txt  /llms-full.txt
 /privacy  /terms  /delete-account   (exigidos pelo Play)
 /pt-br/...                 espelho em português (hreflang)
@@ -763,8 +781,9 @@ Outros itens: exclusão de conta no app e em `/delete-account`, retenção de `s
 | Hub | `flutter analyze`, testes unitários/widget (meta ≥ 70% em `domain`), golden tests das telas principais, integration test do fluxo de inscrição com backend local (`supabase start`). |
 | SDK Android | Testes unitários (Robolectric), teste instrumentado com app de amostra + servidor mock, verificação de tamanho do AAR no CI (falha se > 50 KB). |
 | Plugin Flutter | `example/` com integration test no emulador. |
+| Wrapper React Native | Testes unitários Node/JS (no-op iOS/Web + bridge Android) e módulo nativo Android autolinked. |
 | Backend | Testes SQL (pgTAP) para ledger, jobs e RLS. Testes Deno para Edge Functions. |
-| CD | GitHub Actions: Hub → Play (internal → closed → prod) via Fastlane. SDK → Maven Central (`vanniktech/gradle-maven-publish-plugin`). Plugin → pub.dev (publicação automatizada via OIDC). Landing → deploy em cada push na `main`. Migrations & Edge Functions → deploy contínuo para a instância Supabase na VPS (`supabase db push` / SSH). |
+| CD | GitHub Actions: Hub → Play (internal → closed → prod) via Fastlane. SDK → Maven Central (`vanniktech/gradle-maven-publish-plugin`). Plugin → pub.dev (publicação automatizada via OIDC). Wrapper RN → npm (`@testerloop/react-native`). Landing → deploy em cada push na `main`. Migrations & Edge Functions → deploy contínuo para a instância Supabase na VPS (`supabase db push` / SSH). |
 | Observabilidade | Sentry (Hub + Edge Functions), logs estruturados, dashboards: handshakes/dia, taxa de erro do SDK, inscrições ativas, tempo até preencher vagas. |
 
 ---

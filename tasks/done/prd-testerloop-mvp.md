@@ -12,17 +12,17 @@ Contas de desenvolvedor **pessoais** no Google Play criadas após 13/11/2023 exi
 O **TesterLoop** (nome provisório, **❓ OQ-18**) resolve esse gargalo por meio de um marketplace recíproco baseado em pontos com **verificação real de instalação e uso diário via SDK**:
 - Desenvolvedores testam apps de outros devs para acumular pontos (≥ 60s/dia em foreground por 14 dias contínuos).
 - Com pontos acumulados, publicam suas próprias campanhas de teste fechado (12 vagas + 3 reserva = 15 vagas).
-- Um **SDK leve em Kotlin** (e plugin Flutter) valida handshake via `ContentProvider` (`callingPackage`) + certificado SHA-256 + origem Play Store, sem coletar PII.
+- Um **SDK leve em Kotlin** (com wrappers Flutter e React Native) valida handshake via `ContentProvider` (`callingPackage`) + certificado SHA-256 + origem Play Store, sem coletar PII.
 - O backend roda em **Supabase self-hosted em VPS** (**OQ-17**), os pontos expiram em **360 dias** sem atividade (**OQ-7**), o próprio Hub será publicado em **conta pessoal** usando `reddit.com/r/AndroidAppTesters` para tração inicial (**OQ-15**), e a aquisição orgânica é impulsionada por uma **landing page Astro SEO/AEO** com docs AI-ready (`/llms.txt`).
 
 ---
 
 ## 2. Goals
 
-- Estruturar o monorepo completo (`apps/hub`, `apps/landing`, `packages/sdk-android`, `packages/sdk-flutter`, `packages/shared-contracts`, `backend/supabase`).
+- Estruturar o monorepo completo (`apps/hub`, `apps/landing`, `packages/sdk-android`, `packages/sdk-flutter`, `packages/sdk-react-native`, `packages/shared-contracts`, `backend/supabase`).
 - Entregar schema Postgres completo com ledger imutável, RLS, RPCs atômicas e jobs `pg_cron` prontos para Supabase self-hosted em VPS.
 - Implementar todas as Edge Functions (`/sdk/v1/*`, `/hub/v1/*`, `/billing/v1/*`).
-- Implementar o SDK Android Kotlin zero-code (`androidx.startup` + `ProcessLifecycleOwner` + fila JSONL) e o plugin Flutter `testerloop` (no-op em não-Android).
+- Implementar o SDK Android Kotlin zero-code (`androidx.startup` + `ProcessLifecycleOwner` + fila JSONL) e os wrappers Flutter (`testerloop`) e React Native (`@testerloop/react-native`), ambos no-op em não-Android.
 - Construir o App Hub Flutter com design system dark-first, módulo nativo Android (`TokenProvider`, `TrackedAppsScanner`), jornada completa do testador e jornada completa do desenvolvedor (incluindo validação SDK em 2 etapas, relatório Markdown para o Play Console, reserva Featured e exclusão de conta).
 - Publicar landing page estática Astro SEO/AEO bilíngue (`en` + `pt-BR`) com guias, docs do SDK e `llms.txt`/`llms-full.txt`.
 - Garantir qualidade automatizada com CI no GitHub Actions (`flutter analyze`, `flutter test`, `npm run build`).

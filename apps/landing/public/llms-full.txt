@@ -1,14 +1,15 @@
 # TesterLoop SDK: Installation Guide (AI-ready)
 
-You are integrating the **TesterLoop SDK** into an Android app (native Kotlin/Java **or** Flutter).
+You are integrating the **TesterLoop SDK** into an Android app (native Kotlin/Java, Flutter, **or** React Native).
 The SDK verifies that closed-testing testers installed and used the app. It needs **no runtime code**.
-Follow **exactly one** path below: **Path A (native Android)** or **Path B (Flutter)**. Do not do both.
+Follow **exactly one** path below: **Path A (native Android)**, **Path B (Flutter)**, or **Path C (React Native)**. Do not mix paths.
 
 **Inputs you need from the user:**
 - `APP_KEY`: looks like `tl_pk_` followed by 24 characters. If the user did not provide it, **ask for it**. Do not invent one.
 
 **Detect the project type:**
 - If `pubspec.yaml` exists at the project root -> **Path B (Flutter)**.
+- Else if `package.json` contains `"react-native"` or `"expo"` -> **Path C (React Native)**.
 - Else if `app/build.gradle.kts` or `app/build.gradle` exists -> **Path A (native Android)**.
 
 ## Path A: Native Android (Kotlin/Java)
@@ -32,6 +33,17 @@ Follow **exactly one** path below: **Path A (native Android)** or **Path B (Flut
 ```
 3. Ensure `minSdk` in `android/app/build.gradle.kts` is 23 or higher.
 4. Done. Do not add any Dart code.
+
+## Path C: React Native (CLI / Expo Dev Client)
+1. Run `npm install @testerloop/react-native` (or `pnpm add` / `yarn add`).
+2. Inside `<application>` in `android/app/src/main/AndroidManifest.xml`, add:
+```xml
+<meta-data
+    android:name="io.testerloop.APP_KEY"
+    android:value="APP_KEY" />
+```
+3. Ensure `minSdkVersion` in `android/build.gradle` is 23 or higher. (For Expo managed workflow, run `npx expo prebuild --platform android` first.)
+4. Done. Do not add any JavaScript/TypeScript code; iOS and Web builds are no-op and `pod install` skips this package.
 
 ## Google Play "Data safety" form
 Declare: App activity -> App interactions (collected, not shared, Analytics) and Device or other IDs (random install ID, collected, not shared, Analytics/Fraud prevention). Encrypted in transit. No PII, location, or advertising ID is collected.

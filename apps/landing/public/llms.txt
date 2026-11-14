@@ -5,6 +5,7 @@
 ## Documentation
 - [Android Kotlin SDK Guide](https://testerloop.io/docs/sdk/android): Zero-code integration (1 dependency + 1 manifest meta-data).
 - [Flutter Plugin Guide](https://testerloop.io/docs/sdk/flutter): Android-only Flutter wrapper (`flutter pub add testerloop`).
+- [React Native Wrapper Guide](https://testerloop.io/docs/sdk/react-native): Android-only React Native / Expo Dev Client wrapper (`npm install @testerloop/react-native`).
 - [Full LLM Install Guide](https://testerloop.io/llms-full.txt): Single-file deterministic instructions for AI coding assistants.
 
 ## Guides

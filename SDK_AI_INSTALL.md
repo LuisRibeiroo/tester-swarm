@@ -8,15 +8,16 @@
 
 ## For AI assistants: read this first
 
-You are integrating the **TesterLoop SDK** into an Android app (native Kotlin/Java **or** Flutter).
+You are integrating the **TesterLoop SDK** into an Android app (native Kotlin/Java, Flutter, **or** React Native).
 The SDK verifies that closed-testing testers installed and used the app. It needs **no runtime code**.
-Follow **exactly one** path below: **Path A (native Android)** or **Path B (Flutter)**. Do not do both.
+Follow **exactly one** path below: **Path A (native Android)**, **Path B (Flutter)**, or **Path C (React Native)**. Do not mix paths.
 
 **Inputs you need from the user:**
 - `APP_KEY`: looks like `tl_pk_` followed by 24 characters. If the user did not provide it, **ask for it**. Do not invent one.
 
 **Detect the project type:**
 - If `pubspec.yaml` exists at the project root → **Path B (Flutter)**.
+- Else if `package.json` contains `"react-native"` or `"expo"` → **Path C (React Native)**.
 - Else if `app/build.gradle.kts` or `app/build.gradle` exists → **Path A (native Android)**.
 
 ---
@@ -80,8 +81,37 @@ File: `android/app/build.gradle.kts` (or `build.gradle`). `minSdk` must be **23 
 
 ---
 
-## Verify (both paths)
-1. Build and run a **debug** build on a device: `./gradlew installDebug` or `flutter run`.
+## Path C: React Native (CLI / Expo Dev Client)
+
+### C1. Add the package
+Run in the project root (using the project's package manager):
+```bash
+npm install @testerloop/react-native
+# or: pnpm add @testerloop/react-native
+# or: yarn add @testerloop/react-native
+```
+Android autolinking registers `TesterLoopPackage` automatically (`react-native.config.js` sets `platforms.ios: null`, so `pod install` on iOS installs nothing).
+
+### C2. Add the app key to the Android manifest
+File: `android/app/src/main/AndroidManifest.xml`. Add this **inside** `<application>`:
+```xml
+<meta-data
+    android:name="io.testerloop.APP_KEY"
+    android:value="APP_KEY" />
+```
+Replace `APP_KEY` with the user's key.
+*(If using Expo managed workflow without an `android/` directory yet, run `npx expo prebuild --platform android` first — TesterLoop requires native Android builds and does not run inside Expo Go.)*
+
+### C3. Check minSdkVersion
+File: `android/build.gradle` (under `buildscript.ext`). Ensure `minSdkVersion` is **23 or higher**.
+
+### C4. Done
+**Do not** add any JavaScript/TypeScript code. `App.tsx` / `index.js` stay unchanged. iOS and Web builds are unaffected because the JS module is a safe no-op there.
+
+---
+
+## Verify (all paths)
+1. Build and run a **debug** build on a device: `./gradlew installDebug`, `flutter run`, or `npx react-native run-android`.
 2. Check Logcat for the tag `TesterLoop`. Expected output:
    ```
    TesterLoop: initialized (appKey=tl_pk_…, sdk=1.0.0)
@@ -105,9 +135,15 @@ TesterLoop.setEnabled(context, false) // user opt-out
 await TesterLoop.status();
 await TesterLoop.setEnabled(false);
 ```
+```ts
+import { TesterLoop } from '@testerloop/react-native';
+
+await TesterLoop.status();
+await TesterLoop.setEnabled(false);
+```
 
 ## Google Play "Data safety" form
 Declare: **App activity → App interactions** (collected, not shared, purpose: Analytics) and **Device or other IDs** (random install ID, collected, not shared, purpose: Analytics, Fraud prevention). Data is encrypted in transit. No personal info, location or advertising ID is collected.
 
 ## Removing the SDK after production access
-Delete the dependency line (A2 / B1) and the `meta-data` block (A3 / B2). Nothing else is required.
+Delete the dependency line (A2 / B1 / C1) and the `meta-data` block (A3 / B2 / C2). Nothing else is required.

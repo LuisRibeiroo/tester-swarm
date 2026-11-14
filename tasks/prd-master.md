@@ -6,7 +6,8 @@
 
 | Documento | Escopo | Status |
 |---|---|---|
-| [`done/prd-testerloop-mvp.md`](./done/prd-testerloop-mvp.md) | MVP completo (Contratos, Backend Supabase VPS, SDK Kotlin, Plugin Flutter, Hub App, Landing Astro, CI) | Concluído |
+| [`done/prd-testerloop-mvp.md`](./done/prd-testerloop-mvp.md) | MVP completo (Contratos, Backend Supabase VPS, SDK Kotlin, Wrappers Flutter & React Native, Hub App, Landing Astro, CI) | Concluído |
+| [`done/prd-react-native-wrapper.md`](./done/prd-react-native-wrapper.md) | Wrapper React Native (`@testerloop/react-native`), autolinking Android, detecção `react_native`, docs AI-ready `/docs/sdk/react-native` e CI | Concluído |
 
 ## Screen Registry (App Hub Flutter)
 
