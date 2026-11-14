@@ -219,7 +219,7 @@ class AppDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Integração SDK (AI-ready)',
+                      'SDK (Kotlin · Flutter · React Native)',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w700,
                           ),

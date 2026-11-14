@@ -243,6 +243,8 @@ components:
             wrapper:
               type: string
               nullable: true
+              enum: [flutter, react_native]
+              description: Optional multiplatform wrapper identifier ('flutter', 'react_native', or null for native Android).
         device:
           type: object
           properties:

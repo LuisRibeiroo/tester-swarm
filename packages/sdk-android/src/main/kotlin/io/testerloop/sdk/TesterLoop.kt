@@ -26,6 +26,19 @@ object TesterLoop {
         wrapperName = wrapper
     }
 
+    private fun resolveWrapper(): String? {
+        wrapperName?.let { return it }
+        return when {
+            hasClass("io.testerloop.reactnative.TesterLoopPackage") -> "react_native"
+            hasClass("io.testerloop.flutter.TesterLoopPlugin") -> "flutter"
+            else -> null
+        }
+    }
+
+    private fun hasClass(name: String): Boolean {
+        return runCatching { Class.forName(name) != null }.getOrDefault(false)
+    }
+
     @JvmStatic
     @JvmOverloads
     fun init(context: Context, appKey: String? = null) {
@@ -48,7 +61,7 @@ object TesterLoop {
             val tracker = SessionTracker(
                 context = appCtx,
                 appKey = resolvedKey,
-                wrapper = wrapperName,
+                wrapper = resolveWrapper(),
                 store = store,
                 queue = queue,
                 api = api,
