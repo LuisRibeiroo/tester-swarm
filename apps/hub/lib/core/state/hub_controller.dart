@@ -1,13 +1,15 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import '../api/hub_api_client.dart';
 import '../l10n/app_strings.dart';
 import '../models/models.dart';
 import '../native/hub_native_channel.dart';
 
 class HubController extends ChangeNotifier {
   final HubNativeChannel nativeChannel;
+  final HubApiClient? apiClient;
 
-  HubController({HubNativeChannel? nativeChannel})
+  HubController({HubNativeChannel? nativeChannel, this.apiClient})
       : nativeChannel = nativeChannel ?? HubNativeChannel() {
     _seedInitialData();
   }
@@ -24,6 +26,9 @@ class HubController extends ChangeNotifier {
   UserProfile? _currentUser;
   UserProfile? get currentUser => _currentUser;
   bool get isAuthenticated => _currentUser != null;
+
+  String? _registeredDeviceId;
+  String? get registeredDeviceId => _registeredDeviceId;
 
   bool _dailyReminder19h = true;
   bool get dailyReminder19h => _dailyReminder19h;
@@ -105,8 +110,8 @@ class HubController extends ChangeNotifier {
   }
 
   Future<void> signInWithGoogle() async {
-    await nativeChannel.getDeviceIdentity();
-    _currentUser = const UserProfile(
+    final identity = await nativeChannel.getDeviceIdentity();
+    const user = UserProfile(
       id: 'user-owner-1',
       displayName: 'Luís Ribeiro',
       email: 'luis@testerloop.dev',
@@ -114,6 +119,21 @@ class HubController extends ChangeNotifier {
       integrityVerified: true,
       timezone: 'America/Sao_Paulo',
     );
+    if (apiClient != null) {
+      final response = await apiClient!.registerDevice(
+        userId: user.id,
+        androidIdHash: identity.androidIdHash,
+        model: identity.model,
+        sdkInt: identity.sdkInt,
+        integrityToken: 'play_integrity_local_ok',
+      );
+      final rawDeviceId =
+          response['device_id'] ?? response['deviceId'] ?? response['id'];
+      if (rawDeviceId != null && rawDeviceId.toString().isNotEmpty) {
+        _registeredDeviceId = rawDeviceId.toString();
+      }
+    }
+    _currentUser = user;
     if (!_ledger.any((e) => e.kind == LedgerKind.bonusWelcome)) {
       _ledger.insert(
         0,
@@ -132,12 +152,14 @@ class HubController extends ChangeNotifier {
 
   void signOut() {
     _currentUser = null;
+    _registeredDeviceId = null;
     _selectedTabIndex = 0;
     notifyListeners();
   }
 
   void deleteAccount() {
     _currentUser = null;
+    _registeredDeviceId = null;
     _enrollments.clear();
     _myApps.clear();
     _ledger.clear();
@@ -204,11 +226,26 @@ class HubController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<String> _resolveTrackingToken(Enrollment enrollment) async {
+    if (apiClient == null) {
+      return 'eyJhbGciOiJFUzI1NiJ9.${enrollment.id}.demo';
+    }
+    return apiClient!.fetchTrackingToken(
+      userId: _currentUser?.id ?? 'user-tester-1',
+      enrollmentId: enrollment.id,
+    );
+  }
+
   Future<bool> validateHandshakeAndActivate(String enrollmentId) async {
     final idx = _enrollments.indexWhere((e) => e.id == enrollmentId);
     if (idx < 0) return false;
     final current = _enrollments[idx];
-    final token = 'eyJhbGciOiJFUzI1NiJ9.${current.id}.demo';
+    final String token;
+    try {
+      token = await _resolveTrackingToken(current);
+    } on HubApiException {
+      return false;
+    }
     final launched = await nativeChannel.launchWithToken(
       current.campaign.app.packageName,
       token,
@@ -236,10 +273,17 @@ class HubController extends ChangeNotifier {
     final idx = _enrollments.indexWhere((e) => e.id == enrollmentId);
     if (idx < 0) return;
     final current = _enrollments[idx];
+    final token = await _resolveTrackingToken(current);
     await nativeChannel.launchWithToken(
       current.campaign.app.packageName,
-      'eyJhbGciOiJFUzI1NiJ9.${current.id}.demo',
+      token,
     );
+    if (apiClient != null) {
+      await apiClient!.reportPresence(
+        userId: _currentUser?.id ?? 'user-tester-1',
+        packages: [current.campaign.app.packageName],
+      );
+    }
 
     final updatedSec = current.todayForegroundSeconds + seconds;
     final wasValidated = current.todayValidated;

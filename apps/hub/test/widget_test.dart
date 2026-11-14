@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:testerloop_hub/core/api/hub_api_client.dart';
 import 'package:testerloop_hub/core/native/hub_native_channel.dart';
 import 'package:testerloop_hub/core/state/hub_controller.dart';
 import 'package:testerloop_hub/main.dart';
@@ -100,4 +104,161 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('r/AndroidAppTesters'), findsOneWidget);
   });
+
+  testWidgets(
+      'HubController integrates with remote API server for device registration, tracking token and presence',
+      (tester) async {
+    await tester.runAsync(() async {
+      await HttpOverrides.runWithHttpOverrides(() async {
+        final registerRequests = <Map<String, dynamic>>[];
+        final tokenRequests = <Map<String, dynamic>>[];
+        final presenceRequests = <Map<String, dynamic>>[];
+        final requestHeaders = <String, Map<String, String>>{};
+
+        final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+        final subscription = server.listen((request) async {
+          final rawBody = await utf8.decodeStream(request);
+          final body = rawBody.isEmpty
+              ? <String, dynamic>{}
+              : jsonDecode(rawBody) as Map<String, dynamic>;
+          requestHeaders[request.uri.path] = {
+            'x-user-id': request.headers.value('x-user-id') ?? '',
+            'authorization': request.headers.value('authorization') ?? '',
+          };
+
+          request.response.headers.contentType = ContentType.json;
+          switch (request.uri.path) {
+            case '/functions/v1/hub-device-register':
+              registerRequests.add(body);
+              request.response.statusCode = HttpStatus.ok;
+              request.response.write(
+                jsonEncode({'device_id': 'dev-srv-1', 'welcome_awarded': true}),
+              );
+              break;
+            case '/functions/v1/hub-tracking-token':
+              tokenRequests.add(body);
+              request.response.statusCode = HttpStatus.ok;
+              request.response.write(
+                jsonEncode({
+                  'token': 'eyJhbGciOiJFUzI1NiJ9.mock-es256',
+                  'expires_at': '2026-12-01T00:00:00Z',
+                }),
+              );
+              break;
+            case '/functions/v1/hub-presence':
+              presenceRequests.add(body);
+              request.response.statusCode = HttpStatus.ok;
+              request.response.write(
+                jsonEncode({'day': '2026-11-14', 'recorded': 1}),
+              );
+              break;
+            default:
+              request.response.statusCode = HttpStatus.notFound;
+              request.response.write(jsonEncode({'error': 'not_found'}));
+          }
+          await request.response.close();
+        });
+
+        final native = FakeHubNativeChannel();
+        final apiClient = HubApiClient(
+          baseUrl: 'http://127.0.0.1:${server.port}',
+        );
+
+        try {
+          final controller = HubController(
+            nativeChannel: native,
+            apiClient: apiClient,
+          );
+
+          await controller.signInWithGoogle();
+          expect(controller.isAuthenticated, isTrue);
+          expect(controller.registeredDeviceId, isNotNull);
+          expect(controller.registeredDeviceId, 'dev-srv-1');
+          expect(registerRequests, hasLength(1));
+          expect(
+            registerRequests.single['android_id_hash'],
+            'android-id-hash-mock',
+          );
+          expect(
+            requestHeaders['/functions/v1/hub-device-register']?['x-user-id'],
+            'user-owner-1',
+          );
+
+          final enr = controller.enrollments.first;
+          final activated =
+              await controller.validateHandshakeAndActivate(enr.id);
+          expect(activated, isTrue);
+
+          await controller.recordForegroundSession(enr.id, 65);
+          expect(controller.pendingPoints, 5);
+
+          expect(tokenRequests, hasLength(2));
+          expect(
+            tokenRequests.every((r) => r['enrollment_id'] == enr.id),
+            isTrue,
+          );
+
+          expect(native.savedTokens, hasLength(2));
+          expect(
+            native.savedTokens.every(
+              (call) =>
+                  call.packageName == enr.campaign.app.packageName &&
+                  call.token == 'eyJhbGciOiJFUzI1NiJ9.mock-es256',
+            ),
+            isTrue,
+          );
+
+          expect(native.launchedTokens, hasLength(2));
+          expect(
+            native.launchedTokens.every(
+              (call) =>
+                  call.packageName == enr.campaign.app.packageName &&
+                  call.token == 'eyJhbGciOiJFUzI1NiJ9.mock-es256',
+            ),
+            isTrue,
+          );
+
+          expect(presenceRequests, hasLength(1));
+          expect(
+            presenceRequests.single['packages'],
+            [enr.campaign.app.packageName],
+          );
+        } finally {
+          apiClient.close(force: true);
+          await subscription.cancel();
+          await server.close(force: true);
+        }
+      }, _RealHttpOverrides());
+    });
+  });
+}
+
+class _RealHttpOverrides extends HttpOverrides {}
+
+class FakeHubNativeChannel extends HubNativeChannel {
+  FakeHubNativeChannel() : super(simulated: true);
+
+  final List<({String packageName, String token})> savedTokens = [];
+  final List<({String packageName, String token})> launchedTokens = [];
+
+  @override
+  Future<DeviceIdentity> getDeviceIdentity() async {
+    return const DeviceIdentity(
+      androidIdHash: 'android-id-hash-mock',
+      model: 'Pixel 8 Mock',
+      sdkInt: 35,
+    );
+  }
+
+  @override
+  Future<void> saveTrackingToken(String packageName, String token) async {
+    savedTokens.add((packageName: packageName, token: token));
+  }
+
+  @override
+  Future<bool> launchWithToken(String packageName, String token) async {
+    await saveTrackingToken(packageName, token);
+    launchedTokens.add((packageName: packageName, token: token));
+    return true;
+  }
 }

@@ -49,7 +49,22 @@ class HubNativeChannel {
     }
   }
 
+  Future<void> saveTrackingToken(String packageName, String token) async {
+    if (!_isAndroid) return;
+    try {
+      await _channel
+          .invokeMethod<void>('saveTrackingToken', {
+            'packageName': packageName,
+            'token': token,
+          })
+          .timeout(_channelTimeout);
+    } catch (_) {
+      // Ignore missing native channel in non-device environments.
+    }
+  }
+
   Future<bool> launchWithToken(String packageName, String token) async {
+    await saveTrackingToken(packageName, token);
     if (!_isAndroid) return true;
     try {
       return await _channel
