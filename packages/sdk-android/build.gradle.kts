@@ -35,4 +35,5 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-process:2.8.6")
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
 }
