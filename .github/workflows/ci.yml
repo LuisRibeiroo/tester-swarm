@@ -31,16 +31,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: apps/landing/package-lock.json
+          cache: pnpm
+          cache-dependency-path: apps/landing/pnpm-lock.yaml
       - name: Build Astro static site
         working-directory: apps/landing
         run: |
-          npm ci
-          npm run build
+          pnpm install --frozen-lockfile
+          pnpm run build
+
+  sdk_react_native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Test React Native wrapper
+        working-directory: packages/sdk-react-native
+        run: pnpm test
 
   supabase_sanity:
     runs-on: ubuntu-latest
