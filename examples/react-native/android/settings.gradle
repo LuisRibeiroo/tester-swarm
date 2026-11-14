@@ -1,0 +1,5 @@
+rootProject.name = 'testerloop-react-native-example'
+include ':app'
+include ':testerloop_react-native'
+project(':testerloop_react-native').projectDir =
+    new File(rootProject.projectDir, '../../../packages/sdk-react-native/android')

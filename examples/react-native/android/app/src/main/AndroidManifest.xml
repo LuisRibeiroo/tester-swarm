@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:allowBackup="false"
+        android:label="TesterLoop React Native Example">
+        <meta-data
+            android:name="io.testerloop.APP_KEY"
+            android:value="tl_pk_example_rn_0001" />
+    </application>
+</manifest>
