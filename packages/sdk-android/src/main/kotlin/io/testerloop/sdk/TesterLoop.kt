@@ -39,9 +39,15 @@ object TesterLoop {
         return runCatching { Class.forName(name) != null }.getOrDefault(false)
     }
 
+    internal fun resolveApiUrl(apiUrl: String?, metaApiUrl: String?): String {
+        return apiUrl?.trim()?.takeIf { it.isNotEmpty() }
+            ?: metaApiUrl?.trim()?.takeIf { it.isNotEmpty() }
+            ?: Config.DEFAULT_BASE_URL
+    }
+
     @JvmStatic
     @JvmOverloads
-    fun init(context: Context, appKey: String? = null) {
+    fun init(context: Context, appKey: String? = null, apiUrl: String? = null) {
         runCatching {
             val appCtx = context.applicationContext
             if (!initialized.compareAndSet(false, true)) {
@@ -57,7 +63,8 @@ object TesterLoop {
             }
 
             val queue = EventQueue(appCtx)
-            val api = ApiClient(Config.DEFAULT_BASE_URL)
+            val resolvedApiUrl = resolveApiUrl(apiUrl, AppInfo.readApiUrl(appCtx))
+            val api = ApiClient(resolvedApiUrl)
             val tracker = SessionTracker(
                 context = appCtx,
                 appKey = resolvedKey,

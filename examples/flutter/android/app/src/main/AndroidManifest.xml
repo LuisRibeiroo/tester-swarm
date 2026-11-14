@@ -2,7 +2,8 @@
     <application
         android:label="testerloop_flutter_example"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -30,6 +31,9 @@
         <meta-data
             android:name="io.testerloop.APP_KEY"
             android:value="tl_pk_example_flutter_0001" />
+        <meta-data
+            android:name="io.testerloop.API_URL"
+            android:value="http://10.0.2.2:54321/functions/v1" />
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

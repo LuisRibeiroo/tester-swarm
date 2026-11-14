@@ -1,10 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
         android:allowBackup="false"
-        android:label="TesterLoop Native Example">
+        android:label="TesterLoop Native Example"
+        android:usesCleartextTraffic="true">
         <meta-data
             android:name="io.testerloop.APP_KEY"
             android:value="tl_pk_example_android_0001" />
+        <meta-data
+            android:name="io.testerloop.API_URL"
+            android:value="http://10.0.2.2:54321/functions/v1" />
 
         <activity
             android:name=".MainActivity"

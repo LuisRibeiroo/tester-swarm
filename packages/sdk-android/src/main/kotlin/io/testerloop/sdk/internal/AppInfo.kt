@@ -9,8 +9,13 @@ import java.security.MessageDigest
 
 internal object AppInfo {
     private const val META_APP_KEY = "io.testerloop.APP_KEY"
+    private const val META_API_URL = "io.testerloop.API_URL"
 
-    fun readAppKey(context: Context): String? {
+    fun readAppKey(context: Context): String? = readMetaString(context, META_APP_KEY)
+
+    fun readApiUrl(context: Context): String? = readMetaString(context, META_API_URL)
+
+    private fun readMetaString(context: Context, key: String): String? {
         return runCatching {
             val ai = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 context.packageManager.getApplicationInfo(
@@ -21,7 +26,7 @@ internal object AppInfo {
                 @Suppress("DEPRECATION")
                 context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
             }
-            ai.metaData?.getString(META_APP_KEY)?.trim()
+            ai.metaData?.getString(key)?.trim()?.takeIf { it.isNotEmpty() }
         }.getOrNull()
     }
 

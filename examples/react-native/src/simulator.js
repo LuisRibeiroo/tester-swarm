@@ -1,4 +1,8 @@
+const { randomUUID } = require('node:crypto');
 const { TesterLoop, createTesterLoop } = require('@testerloop/react-native');
+
+const DEFAULT_SIGNING_CERT_SHA256 =
+  '00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF';
 
 const PHASES = [
   {
@@ -86,10 +90,119 @@ function createLoopSimulator(sdk = TesterLoop) {
   };
 }
 
+async function requestJson(url, { method = 'GET', body } = {}) {
+  const res = await fetch(url, {
+    method,
+    headers: body !== undefined ? { 'Content-Type': 'application/json' } : undefined,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+  const text = await res.text();
+  let data = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { raw: text };
+    }
+  }
+  if (!res.ok) {
+    throw new Error(`${method} ${url} failed with HTTP ${res.status}: ${text}`);
+  }
+  return data;
+}
+
+async function runLiveServerScenario({
+  apiUrl,
+  appKey,
+  packageName = 'io.testerloop.example.rn',
+  installId = 'rn-sim-install-1',
+  token,
+} = {}) {
+  if (!apiUrl || typeof apiUrl !== 'string') {
+    throw new Error('apiUrl is required');
+  }
+  if (!appKey || typeof appKey !== 'string') {
+    throw new Error('appKey is required');
+  }
+
+  const baseUrl = apiUrl.replace(/\/+$/, '');
+  const handshakeBase = {
+    appKey,
+    packageName,
+    versionCode: 1,
+    signingCertSha256: DEFAULT_SIGNING_CERT_SHA256,
+    installer: null,
+    debuggable: true,
+    installId,
+    sdk: {
+      platform: 'android',
+      version: '1.0.0',
+      wrapper: 'react_native',
+    },
+    device: {
+      sdkInt: 35,
+    },
+  };
+
+  const initialHandshake = await requestJson(`${baseUrl}/sdk-handshake`, {
+    method: 'POST',
+    body: {
+      ...handshakeBase,
+      token: null,
+    },
+  });
+
+  const enrolledHandshake = await requestJson(`${baseUrl}/sdk-handshake`, {
+    method: 'POST',
+    body: {
+      ...handshakeBase,
+      token: token ?? null,
+    },
+  });
+
+  const now = Date.now();
+  const foregroundMs = 65000;
+  const events = await requestJson(`${baseUrl}/sdk-events`, {
+    method: 'POST',
+    body: {
+      appKey,
+      packageName,
+      installId,
+      token: token ?? null,
+      events: [
+        {
+          type: 'ping',
+          id: `ping-${randomUUID()}`,
+          clientTs: now - foregroundMs,
+        },
+        {
+          type: 'session',
+          id: `session-${randomUUID()}`,
+          startTs: now - foregroundMs,
+          foregroundMs,
+        },
+      ],
+    },
+  });
+
+  const config = await requestJson(
+    `${baseUrl}/sdk-config?appKey=${encodeURIComponent(appKey)}`,
+    { method: 'GET' }
+  );
+
+  return {
+    initialHandshake,
+    enrolledHandshake,
+    events,
+    config,
+  };
+}
+
 module.exports = {
   PHASES,
   TesterLoop,
   createTesterLoop,
   createSimulatedAndroidBridge,
   createLoopSimulator,
+  runLiveServerScenario,
 };
