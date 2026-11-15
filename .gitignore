@@ -34,6 +34,8 @@ local.properties
 # Node / Astro
 node_modules/
 **/node_modules/
+.pnpm-store/
+**/.pnpm-store/
 dist/
 **/dist/
 .astro/
