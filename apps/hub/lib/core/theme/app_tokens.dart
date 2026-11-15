@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Design tokens following the "Developer Trust & Precision" dark-first palette.
 abstract final class AppColors {
