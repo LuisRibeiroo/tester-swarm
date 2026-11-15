@@ -1,4 +1,4 @@
-# PRD — TesterLoop (nome provisório)
+# PRD — Tester Swarm (nome provisório)
 
 > **Status:** Rascunho v0.2 · **Data:** 2026-11-13 · **Autor:** Luís Ribeiro
 > Documento de produto. Detalhes técnicos estão em [`SPEC.md`](./SPEC.md).
@@ -77,8 +77,8 @@ O app principal é usado tanto por testadores quanto por devs.
 | # | Requisito | Prioridade |
 |---|---|---|
 | S1 | **Kotlin/Android:** instalação = 1 dependência + 1 `meta-data` no Manifest. Zero código obrigatório (auto-init). | P0 |
-| S2 | **Plugin Flutter:** `flutter pub add testerloop` + a mesma `meta-data`. Zero código Dart obrigatório. | P0 |
-| S2b | **Wrapper React Native:** `npm install @testerloop/react-native` + a mesma `meta-data`. Zero código JS/TS obrigatório (no-op em iOS/Web). | P0 |
+| S2 | **Plugin Flutter:** `flutter pub add testerswarm` + a mesma `meta-data`. Zero código Dart obrigatório. | P0 |
+| S2b | **Wrapper React Native:** `npm install @testerswarm/react-native` + a mesma `meta-data`. Zero código JS/TS obrigatório (no-op em iOS/Web). | P0 |
 | S3 | Registrar instalação (origem Play Store), sessões em foreground e dias ativos. | P0 |
 | S4 | Associar o uso ao testador do Hub **sem coletar e-mail nem dados pessoais** no app testado. | P0 |
 | S5 | Leve: < 50 KB, sem dependências pesadas e sem impacto mensurável no startup. | P0 |

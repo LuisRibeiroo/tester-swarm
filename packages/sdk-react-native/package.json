@@ -1,7 +1,7 @@
 {
-  "name": "@testerloop/react-native",
+  "name": "@testerswarm/react-native",
   "version": "1.0.0",
-  "description": "Zero-code React Native wrapper for the TesterLoop Android closed-testing verification SDK.",
+  "description": "Zero-code React Native wrapper for the TesterSwarm Android closed-testing verification SDK.",
   "license": "Apache-2.0",
   "main": "src/index.js",
   "react-native": "src/index.js",
@@ -14,14 +14,14 @@
     "!android/build"
   ],
   "scripts": {
-    "test": "node --test test/testerloop.test.mjs"
+    "test": "node --test test/testerswarm.test.mjs"
   },
   "keywords": [
     "react-native",
     "android",
     "google-play",
     "closed-testing",
-    "testerloop"
+    "testerswarm"
   ],
   "peerDependencies": {
     "react": ">=18.0.0",

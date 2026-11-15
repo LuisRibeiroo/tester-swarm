@@ -79,7 +79,7 @@ export async function signTrackingJwt(
 
   const iat = Math.floor(now().getTime() / 1000);
   const fullClaims = {
-    iss: "testerloop",
+    iss: "testerswarm",
     aud: "sdk",
     sub: claims.sub,
     pkg: claims.pkg,
@@ -155,7 +155,7 @@ export async function verifyTrackingJwt(
   const nowSec = Math.floor(now().getTime() / 1000);
   if (
     !payload ||
-    payload.iss !== "testerloop" ||
+    payload.iss !== "testerswarm" ||
     payload.aud !== "sdk" ||
     typeof payload.exp !== "number" ||
     payload.exp <= nowSec
@@ -248,7 +248,7 @@ export function createLocalBackend(options = {}) {
     [
       "community",
       {
-        google_group_url: "https://groups.google.com/g/testerloop-testers",
+        google_group_url: "https://groups.google.com/g/testerswarm-testers",
         reddit_community_url: "https://www.reddit.com/r/AndroidAppTesters",
         hub_account_type: "personal",
       },
@@ -309,15 +309,15 @@ export function createLocalBackend(options = {}) {
     {
       id: "app-example-kotlin",
       owner_id: "user-owner-1",
-      package_name: "io.testerloop.example",
-      name: "TesterLoop Native Example",
-      short_description: "App Android nativo Kotlin de exemplo com TesterLoop SDK.",
+      package_name: "dev.testerswarm.example",
+      name: "Tester Swarm Native Example",
+      short_description: "App Android nativo Kotlin de exemplo com TesterSwarm SDK.",
       description: "App de exemplo em Kotlin para validação do fluxo 12x14.",
       category: "Tools",
       icon_path: null,
       screenshots: [],
-      play_optin_url: "https://play.google.com/apps/testing/io.testerloop.example",
-      app_key: "tl_pk_example_android_0001",
+      play_optin_url: "https://play.google.com/apps/testing/dev.testerswarm.example",
+      app_key: "ts_pk_example_android_0001",
       signing_cert_sha256: null,
       sdk_debug_ok_at: null,
       sdk_verified_at: null,
@@ -326,15 +326,15 @@ export function createLocalBackend(options = {}) {
     {
       id: "app-example-flutter",
       owner_id: "user-owner-1",
-      package_name: "io.testerloop.example.flutter",
-      name: "TesterLoop Flutter Example",
-      short_description: "App Flutter de exemplo com wrapper TesterLoop SDK.",
+      package_name: "dev.testerswarm.example.flutter",
+      name: "Tester Swarm Flutter Example",
+      short_description: "App Flutter de exemplo com wrapper TesterSwarm SDK.",
       description: "App de exemplo em Flutter para validação do fluxo 12x14.",
       category: "Tools",
       icon_path: null,
       screenshots: [],
-      play_optin_url: "https://play.google.com/apps/testing/io.testerloop.example.flutter",
-      app_key: "tl_pk_example_flutter_0001",
+      play_optin_url: "https://play.google.com/apps/testing/dev.testerswarm.example.flutter",
+      app_key: "ts_pk_example_flutter_0001",
       signing_cert_sha256: null,
       sdk_debug_ok_at: null,
       sdk_verified_at: null,
@@ -343,15 +343,15 @@ export function createLocalBackend(options = {}) {
     {
       id: "app-example-rn",
       owner_id: "user-owner-1",
-      package_name: "io.testerloop.example.rn",
-      name: "TesterLoop React Native Example",
-      short_description: "App React Native de exemplo com wrapper TesterLoop SDK.",
+      package_name: "dev.testerswarm.example.rn",
+      name: "Tester Swarm React Native Example",
+      short_description: "App React Native de exemplo com wrapper TesterSwarm SDK.",
       description: "App de exemplo em React Native para validação do fluxo 12x14.",
       category: "Tools",
       icon_path: null,
       screenshots: [],
-      play_optin_url: "https://play.google.com/apps/testing/io.testerloop.example.rn",
-      app_key: "tl_pk_example_rn_0001",
+      play_optin_url: "https://play.google.com/apps/testing/dev.testerswarm.example.rn",
+      app_key: "ts_pk_example_rn_0001",
       signing_cert_sha256: null,
       sdk_debug_ok_at: null,
       sdk_verified_at: null,
@@ -1480,5 +1480,5 @@ export function resolveEntrypoint(entryPath = process.argv[1]) {
 if (import.meta.url === resolveEntrypoint()) {
   const port = Number(process.env.PORT ?? 54321);
   const { url } = await startLocalServer(port);
-  console.log(`TesterLoop local backend listening on ${url}`);
+  console.log(`TesterSwarm local backend listening on ${url}`);
 }

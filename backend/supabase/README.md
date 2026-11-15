@@ -25,5 +25,5 @@ Infraestrutura escolhida para manter custo fixo previsível sem cobrança por MA
 
 ## Backup diário sugerido (`crontab` na VPS)
 ```cron
-0 4 * * * docker exec $(docker ps -qf name=db) pg_dump -U postgres -Fc postgres | gzip > /var/backups/testerloop/pg_$(date +\%F).dump.gz
+0 4 * * * docker exec $(docker ps -qf name=db) pg_dump -U postgres -Fc postgres | gzip > /var/backups/testerswarm/pg_$(date +\%F).dump.gz
 ```

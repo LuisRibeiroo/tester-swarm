@@ -1,5 +1,5 @@
-name: testerloop
-description: Zero-code Flutter plugin wrapping the TesterLoop Android closed-testing verification SDK.
+name: testerswarm
+description: Zero-code Flutter plugin wrapping the TesterSwarm Android closed-testing verification SDK.
 version: 1.0.0
 
 environment:
@@ -19,5 +19,5 @@ flutter:
   plugin:
     platforms:
       android:
-        package: io.testerloop.flutter
-        pluginClass: TesterLoopPlugin
+        package: dev.testerswarm.flutter
+        pluginClass: TesterSwarmPlugin

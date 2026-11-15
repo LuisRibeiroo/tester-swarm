@@ -14,7 +14,7 @@ class DeviceIdentity {
 }
 
 class HubNativeChannel {
-  static const MethodChannel _channel = MethodChannel('io.testerloop.hub/native');
+  static const MethodChannel _channel = MethodChannel('dev.testerswarm.hub/native');
   static const Duration _channelTimeout = Duration(milliseconds: 50);
 
   final bool simulated;

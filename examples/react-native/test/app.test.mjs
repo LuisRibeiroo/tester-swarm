@@ -1,24 +1,24 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { TesterLoop } from '@testerloop/react-native';
+import { TesterSwarm } from '@testerswarm/react-native';
 import simulatorPkg from '../src/simulator.js';
 
 const {
-  createTesterLoop,
+  createTesterSwarm,
   createSimulatedAndroidBridge,
   createLoopSimulator,
   runLiveServerScenario,
 } = simulatorPkg;
 
-test('imports @testerloop/react-native safely as no-op outside Android runtime', async () => {
-  assert.equal(await TesterLoop.status(), 'DISABLED');
-  await assert.doesNotReject(() => TesterLoop.setEnabled(false));
+test('imports @testerswarm/react-native safely as no-op outside Android runtime', async () => {
+  assert.equal(await TesterSwarm.status(), 'DISABLED');
+  await assert.doesNotReject(() => TesterSwarm.setEnabled(false));
 });
 
-test('simulates full 12x14 closed-testing flow through @testerloop/react-native bridge', async () => {
+test('simulates full 12x14 closed-testing flow through @testerswarm/react-native bridge', async () => {
   const bridge = createSimulatedAndroidBridge();
-  const sdk = createTesterLoop(bridge.getBridge);
+  const sdk = createTesterSwarm(bridge.getBridge);
   const sim = createLoopSimulator(sdk);
 
   assert.equal(await sim.readStatus(), 'NOT_ENROLLED');
@@ -85,7 +85,7 @@ test('runs live server scenario against ephemeral HTTP backend', async () => {
     const apiUrl = `http://127.0.0.1:${port}/functions/v1`;
     const result = await runLiveServerScenario({
       apiUrl,
-      appKey: 'tl_pk_example_rn_0001',
+      appKey: 'ts_pk_example_rn_0001',
       token: 'eyJhbGciOiJFUzI1NiJ9.test.sig',
     });
 
@@ -107,7 +107,7 @@ test('runs live server scenario against ephemeral HTTP backend', async () => {
     assert.equal(requests[0].method, 'POST');
     assert.equal(requests[0].url, '/functions/v1/sdk-handshake');
     assert.equal(requests[0].body.token, null);
-    assert.equal(requests[0].body.packageName, 'io.testerloop.example.rn');
+    assert.equal(requests[0].body.packageName, 'dev.testerswarm.example.rn');
     assert.deepEqual(requests[0].body.sdk, {
       platform: 'android',
       version: '1.0.0',
@@ -134,7 +134,7 @@ test('runs live server scenario against ephemeral HTTP backend', async () => {
     assert.equal(requests[3].method, 'GET');
     assert.equal(
       requests[3].url,
-      '/functions/v1/sdk-config?appKey=tl_pk_example_rn_0001'
+      '/functions/v1/sdk-config?appKey=ts_pk_example_rn_0001'
     );
   } finally {
     await new Promise((resolve) => server.close(resolve));

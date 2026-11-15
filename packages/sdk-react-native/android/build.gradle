@@ -1,4 +1,4 @@
-group "io.testerloop.reactnative"
+group "dev.testerswarm.reactnative"
 version "1.0.0"
 
 buildscript {
@@ -23,7 +23,7 @@ def safeExtGet(prop, fallback) {
 }
 
 android {
-    namespace "io.testerloop.reactnative"
+    namespace "dev.testerswarm.reactnative"
     compileSdk safeExtGet("compileSdkVersion", 35)
 
     defaultConfig {
@@ -47,6 +47,6 @@ repositories {
 }
 
 dependencies {
-    implementation "io.testerloop:sdk:1.0.0"
+    implementation "dev.testerswarm:sdk:1.0.0"
     implementation "com.facebook.react:react-android"
 }

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "io.testerloop.example"
+    namespace = "dev.testerswarm.example"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "io.testerloop.example"
+        applicationId = "dev.testerswarm.example"
         minSdk = 23
         targetSdk = 35
         versionCode = 1
@@ -26,6 +26,6 @@ android {
 }
 
 dependencies {
-    implementation("io.testerloop:sdk:1.0.0")
+    implementation("dev.testerswarm:sdk:1.0.0")
     testImplementation("junit:junit:4.13.2")
 }

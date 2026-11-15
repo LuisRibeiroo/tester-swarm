@@ -1,4 +1,4 @@
-project_id = "testerloop"
+project_id = "testerswarm"
 
 [api]
 enabled = true
@@ -17,8 +17,8 @@ port = 54323
 
 [auth]
 enabled = true
-site_url = "https://testerloop.io"
-additional_redirect_urls = ["testerloop://auth-callback"]
+site_url = "https://testerswarm.dev"
+additional_redirect_urls = ["testerswarm://auth-callback"]
 jwt_expiry = 3600
 
 [auth.external.google]

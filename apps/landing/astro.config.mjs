@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://testerloop.io',
+  site: 'https://testerswarm.dev',
   output: 'static',
   integrations: [sitemap()],
   i18n: {

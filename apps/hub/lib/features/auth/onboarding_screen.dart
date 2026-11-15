@@ -69,7 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       const SizedBox(width: AppSpace.sm),
                       Expanded(
                         child: Text(
-                          'TesterLoop Hub',
+                          'Tester Swarm Hub',
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.w700,

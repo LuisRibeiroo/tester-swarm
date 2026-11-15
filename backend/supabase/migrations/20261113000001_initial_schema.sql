@@ -1,4 +1,4 @@
--- 001: Initial TesterLoop schema (Postgres 15+ / Supabase self-hosted on VPS)
+-- 001: Initial TesterSwarm schema (Postgres 15+ / Supabase self-hosted on VPS)
 
 create extension if not exists pgcrypto;
 create extension if not exists btree_gist;

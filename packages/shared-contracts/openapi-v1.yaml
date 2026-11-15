@@ -1,10 +1,10 @@
 openapi: 3.1.0
 info:
-  title: TesterLoop API
+  title: TesterSwarm API
   version: 1.0.0
-  description: API contracts for TesterLoop SDK, Hub app, and Google Play Billing verification (Supabase self-hosted on VPS).
+  description: API contracts for TesterSwarm SDK, Hub app, and Google Play Billing verification (Supabase self-hosted on VPS).
 servers:
-  - url: https://api.testerloop.io/functions/v1
+  - url: https://api.testerswarm.dev/functions/v1
     description: Self-hosted Supabase Edge Functions gateway (placeholder domain - OQ-18)
 
 paths:
@@ -217,7 +217,7 @@ components:
       properties:
         appKey:
           type: string
-          pattern: '^tl_pk_[A-Za-z0-9_-]{8,64}$'
+          pattern: '^ts_pk_[A-Za-z0-9_-]{8,64}$'
         packageName:
           type: string
         versionCode:

@@ -1,4 +1,4 @@
-# PRD Master Tracker — TesterLoop
+# PRD Master Tracker — Tester Swarm
 
 > Registro vivo dos PRDs, telas e pontos em aberto do projeto.
 
@@ -6,8 +6,8 @@
 
 | Documento | Escopo | Status |
 |---|---|---|
-| [`done/prd-testerloop-mvp.md`](./done/prd-testerloop-mvp.md) | MVP completo (Contratos, Backend Supabase VPS, SDK Kotlin, Wrappers Flutter & React Native, Hub App, Landing Astro, CI) | Concluído |
-| [`done/prd-react-native-wrapper.md`](./done/prd-react-native-wrapper.md) | Wrapper React Native (`@testerloop/react-native`), autolinking Android, detecção `react_native`, docs AI-ready `/docs/sdk/react-native` e CI | Concluído |
+| [`done/prd-testerswarm-mvp.md`](./done/prd-testerswarm-mvp.md) | MVP completo (Contratos, Backend Supabase VPS, SDK Kotlin, Wrappers Flutter & React Native, Hub App, Landing Astro, CI) | Concluído |
+| [`done/prd-react-native-wrapper.md`](./done/prd-react-native-wrapper.md) | Wrapper React Native (`@testerswarm/react-native`), autolinking Android, detecção `react_native`, docs AI-ready `/docs/sdk/react-native` e CI | Concluído |
 
 ## Screen Registry (App Hub Flutter)
 
@@ -29,5 +29,5 @@
 | ID | Descrição | Default adotado na implementação |
 |---|---|---|
 | **OQ-9** | Preços finais Featured (24h/72h/7d) | Configuráveis no banco; referência `US$ 4,99 / 11,99 / 24,99` |
-| **OQ-18** | Nome definitivo e domínio | Placeholders `TesterLoop` / `io.testerloop` / `testerloop.io` |
+| **OQ-18** | Nome definitivo e domínio | Placeholders `Tester Swarm` / `dev.testerswarm` / `testerswarm.dev` |
 | **TQ-1..10** | Escolhas técnicas secundárias | Defaults do `SPEC.md §15` |

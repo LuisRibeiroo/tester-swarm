@@ -14,11 +14,11 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "testerloop-android-example"
+rootProject.name = "testerswarm-android-example"
 include(":app")
 
 includeBuild("../../packages/sdk-android") {
     dependencySubstitution {
-        substitute(module("io.testerloop:sdk")).using(project(":"))
+        substitute(module("dev.testerswarm:sdk")).using(project(":"))
     }
 }

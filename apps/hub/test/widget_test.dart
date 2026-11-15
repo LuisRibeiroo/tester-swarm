@@ -3,19 +3,19 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:testerloop_hub/core/api/hub_api_client.dart';
-import 'package:testerloop_hub/core/native/hub_native_channel.dart';
-import 'package:testerloop_hub/core/state/hub_controller.dart';
-import 'package:testerloop_hub/main.dart';
+import 'package:testerswarm_hub/core/api/hub_api_client.dart';
+import 'package:testerswarm_hub/core/native/hub_native_channel.dart';
+import 'package:testerswarm_hub/core/state/hub_controller.dart';
+import 'package:testerswarm_hub/main.dart';
 
 void main() {
   testWidgets('Onboarding signs in and awards welcome bonus', (tester) async {
     final controller = HubController(
       nativeChannel: const HubNativeChannel(simulated: true),
     );
-    await tester.pumpWidget(TesterLoopHubApp(controller: controller));
+    await tester.pumpWidget(TesterSwarmHubApp(controller: controller));
 
-    expect(find.text('TesterLoop Hub'), findsOneWidget);
+    expect(find.text('Tester Swarm Hub'), findsOneWidget);
     await tester.tap(find.byKey(const Key('google_signin_btn')));
     await tester.pumpAndSettle();
 
@@ -29,7 +29,7 @@ void main() {
       nativeChannel: const HubNativeChannel(simulated: true),
     );
     await controller.signInWithGoogle();
-    await tester.pumpWidget(TesterLoopHubApp(controller: controller));
+    await tester.pumpWidget(TesterSwarmHubApp(controller: controller));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('BoletoScan OCR'));
@@ -69,7 +69,7 @@ void main() {
       nativeChannel: const HubNativeChannel(simulated: true),
     );
     await controller.signInWithGoogle();
-    await tester.pumpWidget(TesterLoopHubApp(controller: controller));
+    await tester.pumpWidget(TesterSwarmHubApp(controller: controller));
     await tester.pumpAndSettle();
 
     // Navigate to My Apps

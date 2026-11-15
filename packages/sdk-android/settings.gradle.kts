@@ -14,4 +14,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "testerloop-sdk-android"
+rootProject.name = "testerswarm-sdk-android"

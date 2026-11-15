@@ -1,11 +1,11 @@
-# TesterLoop SDK: Installation Guide (AI-ready)
+# Tester Swarm SDK: Installation Guide (AI-ready)
 
-You are integrating the **TesterLoop SDK** into an Android app (native Kotlin/Java, Flutter, **or** React Native).
+You are integrating the **Tester Swarm SDK** into an Android app (native Kotlin/Java, Flutter, **or** React Native).
 The SDK verifies that closed-testing testers installed and used the app. It needs **no runtime code**.
 Follow **exactly one** path below: **Path A (native Android)**, **Path B (Flutter)**, or **Path C (React Native)**. Do not mix paths.
 
 **Inputs you need from the user:**
-- `APP_KEY`: looks like `tl_pk_` followed by 24 characters. If the user did not provide it, **ask for it**. Do not invent one.
+- `APP_KEY`: looks like `ts_pk_` followed by 24 characters. If the user did not provide it, **ask for it**. Do not invent one.
 
 **Detect the project type:**
 - If `pubspec.yaml` exists at the project root -> **Path B (Flutter)**.
@@ -14,32 +14,32 @@ Follow **exactly one** path below: **Path A (native Android)**, **Path B (Flutte
 
 ## Path A: Native Android (Kotlin/Java)
 1. Ensure `mavenCentral()` is in `settings.gradle.kts`.
-2. Add `implementation("io.testerloop:sdk:1.0.0")` to `app/build.gradle.kts`.
+2. Add `implementation("dev.testerswarm:sdk:1.0.0")` to `app/build.gradle.kts`.
 3. Inside `<application>` in `app/src/main/AndroidManifest.xml`, add:
 ```xml
 <meta-data
-    android:name="io.testerloop.APP_KEY"
+    android:name="dev.testerswarm.APP_KEY"
     android:value="APP_KEY" />
 ```
 4. Done. Auto-init runs via `androidx.startup`.
 
 ## Path B: Flutter
-1. Run `flutter pub add testerloop`.
+1. Run `flutter pub add testerswarm`.
 2. Inside `<application>` in `android/app/src/main/AndroidManifest.xml`, add:
 ```xml
 <meta-data
-    android:name="io.testerloop.APP_KEY"
+    android:name="dev.testerswarm.APP_KEY"
     android:value="APP_KEY" />
 ```
 3. Ensure `minSdk` in `android/app/build.gradle.kts` is 23 or higher.
 4. Done. Do not add any Dart code.
 
 ## Path C: React Native (CLI / Expo Dev Client)
-1. Run `npm install @testerloop/react-native` (or `pnpm add` / `yarn add`).
+1. Run `npm install @testerswarm/react-native` (or `pnpm add` / `yarn add`).
 2. Inside `<application>` in `android/app/src/main/AndroidManifest.xml`, add:
 ```xml
 <meta-data
-    android:name="io.testerloop.APP_KEY"
+    android:name="dev.testerswarm.APP_KEY"
     android:value="APP_KEY" />
 ```
 3. Ensure `minSdkVersion` in `android/build.gradle` is 23 or higher. (For Expo managed workflow, run `npx expo prebuild --platform android` first.)

@@ -1,4 +1,4 @@
-name: testerloop
+name: testerswarm
 
 packages:
   - packages/sdk-flutter

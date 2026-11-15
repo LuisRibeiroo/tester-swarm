@@ -1,4 +1,4 @@
-# TesterLoop (nome provisório)
+# Tester Swarm (nome provisório)
 
 Marketplace de troca de testes para cumprir o requisito de **teste fechado do Google Play** (12 testadores × 14 dias contínuos), com verificação de instalação e uso diário via SDK.
 
@@ -9,8 +9,8 @@ Marketplace de troca de testes para cumprir o requisito de **teste fechado do Go
 | [`apps/hub`](./apps/hub) | App Hub em Flutter (Android + Console Web responsivo) e módulo nativo Kotlin (`TokenProvider`, `TrackedAppsScanner`) |
 | [`apps/landing`](./apps/landing) | Landing page Astro estática (EN + PT-BR), guias SEO/AEO, docs do SDK e `/llms.txt` |
 | [`packages/sdk-android`](./packages/sdk-android) | SDK Android nativo em Kotlin (`androidx.startup` + `ProcessLifecycleOwner`, zero código obrigatório) |
-| [`packages/sdk-flutter`](./packages/sdk-flutter) | Plugin Flutter `testerloop` (somente Android; no-op em outras plataformas) |
-| [`packages/sdk-react-native`](./packages/sdk-react-native) | Wrapper React Native `@testerloop/react-native` (Android autolinking; no-op em iOS/Web) |
+| [`packages/sdk-flutter`](./packages/sdk-flutter) | Plugin Flutter `testerswarm` (somente Android; no-op em outras plataformas) |
+| [`packages/sdk-react-native`](./packages/sdk-react-native) | Wrapper React Native `@testerswarm/react-native` (Android autolinking; no-op em iOS/Web) |
 | [`packages/shared-contracts`](./packages/shared-contracts) | OpenAPI v1 e JSON Schema do JWT ES256 |
 | [`backend/supabase`](./backend/supabase) | Migrations Postgres, RLS, RPCs, `pg_cron` (expiração em 360 dias), Edge Functions Deno e `docker-compose.vps.yml` |
 | [`tasks/`](./tasks) | PRDs do projeto ([`prd-master.md`](./tasks/prd-master.md)) |

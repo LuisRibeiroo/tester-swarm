@@ -30,7 +30,7 @@ async function jsonRequest(baseUrl, pathname, { method = "GET", headers = {}, bo
   return { status: res.status, headers: res.headers, body: json };
 }
 
-describe("TesterLoop local backend server", () => {
+describe("Tester Swarm local backend server", () => {
   const serversToClose = [];
 
   afterEach(async () => {
@@ -67,7 +67,7 @@ describe("TesterLoop local backend server", () => {
 
     const cfgRes = await jsonRequest(
       srv.url,
-      "/functions/v1/sdk-config?appKey=tl_pk_example_android_0001",
+      "/functions/v1/sdk-config?appKey=ts_pk_example_android_0001",
     );
     assert.equal(cfgRes.status, 200);
     assert.deepEqual(cfgRes.body, { enabled: true, flushIntervalSec: 30 });
@@ -86,7 +86,7 @@ describe("TesterLoop local backend server", () => {
   it("signs and verifies ES256 tracking JWTs and rejects 403 when token is used for another package", async () => {
     const { token, expiresAt } = await signTrackingJwt({
       sub: "enr-owner-kotlin",
-      pkg: "io.testerloop.example",
+      pkg: "dev.testerswarm.example",
       kind: "owner_validation",
       tz: "America/Sao_Paulo",
     });
@@ -96,10 +96,10 @@ describe("TesterLoop local backend server", () => {
 
     const claims = await verifyTrackingJwt(token);
     assert.ok(claims);
-    assert.equal(claims.iss, "testerloop");
+    assert.equal(claims.iss, "testerswarm");
     assert.equal(claims.aud, "sdk");
     assert.equal(claims.sub, "enr-owner-kotlin");
-    assert.equal(claims.pkg, "io.testerloop.example");
+    assert.equal(claims.pkg, "dev.testerswarm.example");
     assert.equal(claims.kind, "owner_validation");
     assert.equal(claims.tz, "America/Sao_Paulo");
 
@@ -110,7 +110,7 @@ describe("TesterLoop local backend server", () => {
     const expired = await signTrackingJwt(
       {
         sub: "enr-owner-kotlin",
-        pkg: "io.testerloop.example",
+        pkg: "dev.testerswarm.example",
         kind: "owner_validation",
         tz: "America/Sao_Paulo",
       },
@@ -128,12 +128,12 @@ describe("TesterLoop local backend server", () => {
     assert.ok(tokRes.body.token);
     assert.ok(tokRes.body.expires_at);
 
-    // Token issued for io.testerloop.example sent to io.testerloop.example.flutter -> 403
+    // Token issued for dev.testerswarm.example sent to dev.testerswarm.example.flutter -> 403
     const mismatchHandshake = await jsonRequest(srv.url, "/functions/v1/sdk-handshake", {
       method: "POST",
       body: {
-        appKey: "tl_pk_example_flutter_0001",
-        packageName: "io.testerloop.example.flutter",
+        appKey: "ts_pk_example_flutter_0001",
+        packageName: "dev.testerswarm.example.flutter",
         versionCode: 1,
         signingCertSha256: "CERT:FLUTTER",
         installer: null,
@@ -149,8 +149,8 @@ describe("TesterLoop local backend server", () => {
     const mismatchEvents = await jsonRequest(srv.url, "/functions/v1/sdk-events", {
       method: "POST",
       body: {
-        appKey: "tl_pk_example_flutter_0001",
-        packageName: "io.testerloop.example.flutter",
+        appKey: "ts_pk_example_flutter_0001",
+        packageName: "dev.testerswarm.example.flutter",
         installId: "inst-mismatch",
         token: tokRes.body.token,
         events: [{ type: "ping", id: "p1", clientTs: Date.now() }],
@@ -235,8 +235,8 @@ describe("TesterLoop local backend server", () => {
     const step1 = await jsonRequest(srv.url, "/functions/v1/sdk-handshake", {
       method: "POST",
       body: {
-        appKey: "tl_pk_example_android_0001",
-        packageName: "io.testerloop.example",
+        appKey: "ts_pk_example_android_0001",
+        packageName: "dev.testerswarm.example",
         versionCode: 1,
         signingCertSha256: "DEBUG:SHA256",
         installer: null,
@@ -266,8 +266,8 @@ describe("TesterLoop local backend server", () => {
     const step2 = await jsonRequest(srv.url, "/functions/v1/sdk-handshake", {
       method: "POST",
       body: {
-        appKey: "tl_pk_example_android_0001",
-        packageName: "io.testerloop.example",
+        appKey: "ts_pk_example_android_0001",
+        packageName: "dev.testerswarm.example",
         versionCode: 2,
         signingCertSha256: "PLAY:CERT:SHA256:KOTLIN",
         installer: "com.android.vending",
@@ -305,8 +305,8 @@ describe("TesterLoop local backend server", () => {
     await jsonRequest(srv.url, "/functions/v1/sdk-handshake", {
       method: "POST",
       body: {
-        appKey: "tl_pk_example_android_0001",
-        packageName: "io.testerloop.example",
+        appKey: "ts_pk_example_android_0001",
+        packageName: "dev.testerswarm.example",
         versionCode: 2,
         signingCertSha256: "PLAY:CERT:SHA256:KOTLIN",
         installer: "com.android.vending",
@@ -340,22 +340,22 @@ describe("TesterLoop local backend server", () => {
     const examples = [
       {
         appId: "app-example-kotlin",
-        pkg: "io.testerloop.example",
-        appKey: "tl_pk_example_android_0001",
+        pkg: "dev.testerswarm.example",
+        appKey: "ts_pk_example_android_0001",
         ownerEnr: "enr-owner-kotlin",
         wrapper: null,
       },
       {
         appId: "app-example-flutter",
-        pkg: "io.testerloop.example.flutter",
-        appKey: "tl_pk_example_flutter_0001",
+        pkg: "dev.testerswarm.example.flutter",
+        appKey: "ts_pk_example_flutter_0001",
         ownerEnr: "enr-owner-flutter",
         wrapper: "flutter",
       },
       {
         appId: "app-example-rn",
-        pkg: "io.testerloop.example.rn",
-        appKey: "tl_pk_example_rn_0001",
+        pkg: "dev.testerswarm.example.rn",
+        appKey: "ts_pk_example_rn_0001",
         ownerEnr: "enr-owner-rn",
         wrapper: "react_native",
       },
@@ -537,7 +537,7 @@ describe("TesterLoop local backend server", () => {
     const presenceRes = await jsonRequest(srv.url, "/functions/v1/hub-presence", {
       method: "POST",
       headers: { "x-user-id": "user-tester-1" },
-      body: { packages: ["io.testerloop.example", "io.testerloop.example.flutter"] },
+      body: { packages: ["dev.testerswarm.example", "dev.testerswarm.example.flutter"] },
     });
     assert.equal(presenceRes.status, 200);
     assert.equal(presenceRes.body.recorded, 2);
@@ -607,8 +607,8 @@ describe("TesterLoop local backend server", () => {
     const hs = await jsonRequest(srv.url, "/functions/v1/sdk-handshake", {
       method: "POST",
       body: {
-        appKey: "tl_pk_example_android_0001",
-        packageName: "io.testerloop.example",
+        appKey: "ts_pk_example_android_0001",
+        packageName: "dev.testerswarm.example",
         versionCode: 2,
         signingCertSha256: "CERT:KOTLIN",
         installer: "com.android.vending",
@@ -622,7 +622,7 @@ describe("TesterLoop local backend server", () => {
 
     const cfgBeforePublish = await jsonRequest(
       srv.url,
-      "/functions/v1/sdk-config?appKey=tl_pk_example_android_0001",
+      "/functions/v1/sdk-config?appKey=ts_pk_example_android_0001",
     );
     assert.equal(cfgBeforePublish.status, 200);
     assert.deepEqual(cfgBeforePublish.body, { enabled: false, flushIntervalSec: 30 });
@@ -637,7 +637,7 @@ describe("TesterLoop local backend server", () => {
 
     const cfgAfterPublish = await jsonRequest(
       srv.url,
-      "/functions/v1/sdk-config?appKey=tl_pk_example_android_0001",
+      "/functions/v1/sdk-config?appKey=ts_pk_example_android_0001",
     );
     assert.deepEqual(cfgAfterPublish.body, { enabled: true, flushIntervalSec: 30 });
 

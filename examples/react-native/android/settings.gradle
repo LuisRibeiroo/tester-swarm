@@ -1,5 +1,5 @@
-rootProject.name = 'testerloop-react-native-example'
+rootProject.name = 'testerswarm-react-native-example'
 include ':app'
-include ':testerloop_react-native'
-project(':testerloop_react-native').projectDir =
+include ':testerswarm_react-native'
+project(':testerswarm_react-native').projectDir =
     new File(rootProject.projectDir, '../../../packages/sdk-react-native/android')

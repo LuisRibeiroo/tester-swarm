@@ -1,5 +1,5 @@
 export interface TrackingClaims {
-  iss: "testerloop";
+  iss: "testerswarm";
   aud: "sdk";
   sub: string;
   pkg: string;
@@ -44,7 +44,7 @@ export async function signTrackingJwt(
 
   const now = Math.floor(Date.now() / 1000);
   const fullClaims: TrackingClaims = {
-    iss: "testerloop",
+    iss: "testerswarm",
     aud: "sdk",
     ...claims,
     iat: now,
@@ -107,7 +107,7 @@ export async function verifyTrackingJwt(
 
   const now = Math.floor(Date.now() / 1000);
   if (
-    payload.iss !== "testerloop" ||
+    payload.iss !== "testerswarm" ||
     payload.aud !== "sdk" ||
     payload.exp <= now
   ) {

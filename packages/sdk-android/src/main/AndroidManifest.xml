@@ -4,18 +4,18 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <queries>
-        <provider android:authorities="io.testerloop.hub.token" />
+        <provider android:authorities="dev.testerswarm.hub.token" />
     </queries>
 
     <application>
         <activity
-            android:name="io.testerloop.sdk.internal.EntryActivity"
+            android:name="dev.testerswarm.sdk.internal.EntryActivity"
             android:exported="true"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
-                <action android:name="io.testerloop.action.OPEN" />
+                <action android:name="dev.testerswarm.action.OPEN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -26,7 +26,7 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="io.testerloop.sdk.internal.TesterLoopInitializer"
+                android:name="dev.testerswarm.sdk.internal.TesterSwarmInitializer"
                 android:value="androidx.startup" />
         </provider>
     </application>

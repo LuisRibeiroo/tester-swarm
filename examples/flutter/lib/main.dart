@@ -1,37 +1,37 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:testerloop/testerloop.dart';
+import 'package:testerswarm/testerswarm.dart';
 
 void main() {
-  runApp(const TesterLoopExampleApp());
+  runApp(const TesterSwarmExampleApp());
 }
 
 enum SimulationPhase {
-  initialized('App aberto sem vínculo do Hub', TesterLoopStatus.notEnrolled),
+  initialized('App aberto sem vínculo do Hub', TesterSwarmStatus.notEnrolled),
   handshake(
-    'Intent io.testerloop.action.OPEN + token JWT ES256 recebido',
-    TesterLoopStatus.tracking,
+    'Intent dev.testerswarm.action.OPEN + token JWT ES256 recebido',
+    TesterSwarmStatus.tracking,
   ),
   foregroundValidated(
     'Sessão >= 60s em foreground enviada (+1 ponto pendente)',
-    TesterLoopStatus.tracking,
+    TesterSwarmStatus.tracking,
   ),
   campaignFinished(
     'Campanha concluída ou opt-out via setEnabled(false)',
-    TesterLoopStatus.disabled,
+    TesterSwarmStatus.disabled,
   );
 
   const SimulationPhase(this.summary, this.expectedStatus);
   final String summary;
-  final TesterLoopStatus expectedStatus;
+  final TesterSwarmStatus expectedStatus;
 }
 
-class TesterLoopExampleApp extends StatelessWidget {
-  const TesterLoopExampleApp({super.key});
+class TesterSwarmExampleApp extends StatelessWidget {
+  const TesterSwarmExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TesterLoop Flutter Example',
+      title: 'Tester Swarm Flutter Example',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF6366F1),
@@ -39,20 +39,20 @@ class TesterLoopExampleApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const TesterLoopDemoPage(),
+      home: const TesterSwarmDemoPage(),
     );
   }
 }
 
-class TesterLoopDemoPage extends StatefulWidget {
-  const TesterLoopDemoPage({super.key});
+class TesterSwarmDemoPage extends StatefulWidget {
+  const TesterSwarmDemoPage({super.key});
 
   @override
-  State<TesterLoopDemoPage> createState() => _TesterLoopDemoPageState();
+  State<TesterSwarmDemoPage> createState() => _TesterSwarmDemoPageState();
 }
 
-class _TesterLoopDemoPageState extends State<TesterLoopDemoPage> {
-  TesterLoopStatus _realStatus = TesterLoopStatus.notEnrolled;
+class _TesterSwarmDemoPageState extends State<TesterSwarmDemoPage> {
+  TesterSwarmStatus _realStatus = TesterSwarmStatus.notEnrolled;
   bool _sdkEnabled = true;
   int _phaseIndex = 0;
   final List<String> _logs = <String>[];
@@ -64,22 +64,22 @@ class _TesterLoopDemoPageState extends State<TesterLoopDemoPage> {
   }
 
   Future<void> _refreshStatus() async {
-    final current = await TesterLoop.status();
+    final current = await TesterSwarm.status();
     if (!mounted) return;
     setState(() {
       _realStatus = current;
-      _logs.add('TesterLoop.status() -> ${current.name}');
+      _logs.add('TesterSwarm.status() -> ${current.name}');
     });
   }
 
   Future<void> _toggleEnabled(bool enabled) async {
-    await TesterLoop.setEnabled(enabled);
-    final current = await TesterLoop.status();
+    await TesterSwarm.setEnabled(enabled);
+    final current = await TesterSwarm.status();
     if (!mounted) return;
     setState(() {
       _sdkEnabled = enabled;
       _realStatus = current;
-      _logs.add('TesterLoop.setEnabled($enabled) -> ${current.name}');
+      _logs.add('TesterSwarm.setEnabled($enabled) -> ${current.name}');
     });
   }
 
@@ -87,11 +87,11 @@ class _TesterLoopDemoPageState extends State<TesterLoopDemoPage> {
     final nextIndex = (_phaseIndex + 1) % SimulationPhase.values.length;
     final phase = SimulationPhase.values[nextIndex];
     if (phase == SimulationPhase.campaignFinished) {
-      await TesterLoop.setEnabled(false);
+      await TesterSwarm.setEnabled(false);
     } else if (!_sdkEnabled) {
-      await TesterLoop.setEnabled(true);
+      await TesterSwarm.setEnabled(true);
     }
-    final current = await TesterLoop.status();
+    final current = await TesterSwarm.status();
     if (!mounted) return;
     setState(() {
       _phaseIndex = nextIndex;
@@ -106,7 +106,7 @@ class _TesterLoopDemoPageState extends State<TesterLoopDemoPage> {
     final phase = SimulationPhase.values[_phaseIndex];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('TesterLoop Flutter Example')),
+      appBar: AppBar(title: const Text('Tester Swarm Flutter Example')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -117,7 +117,7 @@ class _TesterLoopDemoPageState extends State<TesterLoopDemoPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'SDK Status (package:testerloop)',
+                    'SDK Status (package:testerswarm)',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 8),

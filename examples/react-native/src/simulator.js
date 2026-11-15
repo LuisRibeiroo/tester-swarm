@@ -1,5 +1,5 @@
 const { randomUUID } = require('node:crypto');
-const { TesterLoop, createTesterLoop } = require('@testerloop/react-native');
+const { TesterSwarm, createTesterSwarm } = require('@testerswarm/react-native');
 
 const DEFAULT_SIGNING_CERT_SHA256 =
   '00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF';
@@ -12,7 +12,7 @@ const PHASES = [
   },
   {
     name: 'HANDSHAKE',
-    summary: 'Intent io.testerloop.action.OPEN + token JWT ES256 (wrapper=react_native)',
+    summary: 'Intent dev.testerswarm.action.OPEN + token JWT ES256 (wrapper=react_native)',
     expectedStatus: 'TRACKING',
   },
   {
@@ -56,7 +56,7 @@ function createSimulatedAndroidBridge() {
   };
 }
 
-function createLoopSimulator(sdk = TesterLoop) {
+function createLoopSimulator(sdk = TesterSwarm) {
   let phaseIndex = 0;
 
   return {
@@ -114,7 +114,7 @@ async function requestJson(url, { method = 'GET', body } = {}) {
 async function runLiveServerScenario({
   apiUrl,
   appKey,
-  packageName = 'io.testerloop.example.rn',
+  packageName = 'dev.testerswarm.example.rn',
   installId = 'rn-sim-install-1',
   token,
 } = {}) {
@@ -200,8 +200,8 @@ async function runLiveServerScenario({
 
 module.exports = {
   PHASES,
-  TesterLoop,
-  createTesterLoop,
+  TesterSwarm,
+  createTesterSwarm,
   createSimulatedAndroidBridge,
   createLoopSimulator,
   runLiveServerScenario,

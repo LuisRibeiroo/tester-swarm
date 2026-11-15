@@ -10,12 +10,12 @@ import 'features/settings/settings_screen.dart';
 import 'features/wallet/wallet_screen.dart';
 
 void main() {
-  runApp(TesterLoopHubApp(controller: HubController()));
+  runApp(TesterSwarmHubApp(controller: HubController()));
 }
 
-class TesterLoopHubApp extends StatelessWidget {
+class TesterSwarmHubApp extends StatelessWidget {
   final HubController controller;
-  const TesterLoopHubApp({super.key, required this.controller});
+  const TesterSwarmHubApp({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {

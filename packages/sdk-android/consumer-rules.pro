@@ -1,4 +1,4 @@
--keep class io.testerloop.sdk.TesterLoop { *; }
--keep enum io.testerloop.sdk.TesterLoopStatus { *; }
--keep class io.testerloop.sdk.internal.TesterLoopInitializer { *; }
--keep class io.testerloop.sdk.internal.EntryActivity { *; }
+-keep class dev.testerswarm.sdk.TesterSwarm { *; }
+-keep enum dev.testerswarm.sdk.TesterSwarmStatus { *; }
+-keep class dev.testerswarm.sdk.internal.TesterSwarmInitializer { *; }
+-keep class dev.testerswarm.sdk.internal.EntryActivity { *; }

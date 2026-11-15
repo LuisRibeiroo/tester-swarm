@@ -3,37 +3,37 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="React Native Wrapper Docs — TesterLoop"
-  description="Integrate TesterLoop into React Native and Expo Dev Client Android apps with @testerloop/react-native and one manifest tag."
+  title="React Native Wrapper Docs — Tester Swarm"
+  description="Integrate Tester Swarm into React Native and Expo Dev Client Android apps with @testerswarm/react-native and one manifest tag."
   canonicalPath="/docs/sdk/react-native"
 >
   <article class="card">
-    <h1>TesterLoop React Native Wrapper</h1>
+    <h1>Tester Swarm React Native Wrapper</h1>
     <p>
-      Android-only wrapper (<code>@testerloop/react-native</code>) via React Native autolinking;
+      Android-only wrapper (<code>@testerswarm/react-native</code>) via React Native autolinking;
       safe no-op on iOS and Web (<code>platforms.ios = null</code> so <code>pod install</code> skips it).
       No JavaScript/TypeScript code required.
     </p>
 
     <h2>1. Install package</h2>
-    <pre><code>npm install @testerloop/react-native
-# or: pnpm add @testerloop/react-native</code></pre>
+    <pre><code>npm install @testerswarm/react-native
+# or: pnpm add @testerswarm/react-native</code></pre>
 
     <h2>2. Add APP_KEY (<code>android/app/src/main/AndroidManifest.xml</code>)</h2>
     <pre><code>&lt;meta-data
-    android:name="io.testerloop.APP_KEY"
-    android:value="tl_pk_your_app_key_here" /&gt;</code></pre>
+    android:name="dev.testerswarm.APP_KEY"
+    android:value="ts_pk_your_app_key_here" /&gt;</code></pre>
 
     <p>
       Ensure <code>minSdkVersion</code> is <strong>23 or higher</strong> in <code>android/build.gradle</code>.
-      For Expo managed projects, run <code>npx expo prebuild --platform android</code> first (TesterLoop requires native Android builds, not Expo Go).
+      For Expo managed projects, run <code>npx expo prebuild --platform android</code> first (Tester Swarm requires native Android builds, not Expo Go).
     </p>
 
     <h2>3. Optional JS / TS API</h2>
-    <pre><code>import &#123; TesterLoop &#125; from '@testerloop/react-native';
+    <pre><code>import &#123; Tester Swarm &#125; from '@testerswarm/react-native';
 
-const status = await TesterLoop.status(); // 'NOT_ENROLLED' | 'TRACKING' | 'DISABLED'
-await TesterLoop.setEnabled(false);</code></pre>
+const status = await TesterSwarm.status(); // 'NOT_ENROLLED' | 'TRACKING' | 'DISABLED'
+await TesterSwarm.setEnabled(false);</code></pre>
 
     <p>
       Also available: <a href="/docs/sdk/android">Android Kotlin SDK</a> ·

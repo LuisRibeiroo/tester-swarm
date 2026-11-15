@@ -207,7 +207,7 @@ class AppDetailScreen extends StatelessWidget {
         final app = controller.myApps.firstWhere((a) => a.id == appId);
         final campaign = controller.campaignForApp(app.id);
         final aiPrompt =
-            'Integre o TesterLoop SDK neste projeto seguindo https://testerloop.io/llms-full.txt. appKey: ${app.appKey}';
+            'Integre o Tester Swarm SDK neste projeto seguindo https://testerswarm.dev/llms-full.txt. appKey: ${app.appKey}';
 
         return Scaffold(
           appBar: AppBar(title: Text(app.name)),

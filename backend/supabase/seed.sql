@@ -24,7 +24,7 @@ insert into public.config (key, value)
 values (
   'community',
   jsonb_build_object(
-    'google_group_url', 'https://groups.google.com/g/testerloop-testers',
+    'google_group_url', 'https://groups.google.com/g/testerswarm-testers',
     'reddit_community_url', 'https://www.reddit.com/r/AndroidAppTesters',
     'hub_account_type', 'personal'
   )

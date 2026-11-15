@@ -3,8 +3,8 @@ module.exports = {
     platforms: {
       ios: null,
       android: {
-        packageImportPath: 'import io.testerloop.reactnative.TesterLoopPackage;',
-        packageInstance: 'new TesterLoopPackage()',
+        packageImportPath: 'import dev.testerswarm.reactnative.TesterSwarmPackage;',
+        packageInstance: 'new TesterSwarmPackage()',
       },
     },
   },

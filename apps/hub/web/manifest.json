@@ -1,6 +1,6 @@
 {
-    "name": "testerloop_hub",
-    "short_name": "testerloop_hub",
+    "name": "testerswarm_hub",
+    "short_name": "testerswarm_hub",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -2,11 +2,11 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 
 android {
-    namespace "io.testerloop.example.rn"
+    namespace "dev.testerswarm.example.rn"
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "io.testerloop.example.rn"
+        applicationId "dev.testerswarm.example.rn"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -29,6 +29,6 @@ android {
 
 dependencies {
     implementation "com.facebook.react:react-android"
-    implementation "io.testerloop:sdk:1.0.0"
-    implementation project(':testerloop_react-native')
+    implementation "dev.testerswarm:sdk:1.0.0"
+    implementation project(':testerswarm_react-native')
 }

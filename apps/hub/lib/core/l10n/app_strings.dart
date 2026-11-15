@@ -6,7 +6,7 @@ class AppStrings {
 
   bool get isPt => locale == AppLocale.ptBr;
 
-  String get appTitle => 'TesterLoop Hub';
+  String get appTitle => 'Tester Swarm Hub';
   String get discover => isPt ? 'Descobrir' : 'Discover';
   String get myTests => isPt ? 'Meus Testes' : 'My Tests';
   String get wallet => isPt ? 'Carteira' : 'Wallet';

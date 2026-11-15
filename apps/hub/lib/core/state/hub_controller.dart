@@ -15,7 +15,7 @@ class HubController extends ChangeNotifier {
   }
 
   static const String googleGroupUrl =
-      'https://groups.google.com/g/testerloop-testers';
+      'https://groups.google.com/g/testerswarm-testers';
   static const String redditCommunityUrl =
       'https://www.reddit.com/r/AndroidAppTesters';
 
@@ -114,7 +114,7 @@ class HubController extends ChangeNotifier {
     const user = UserProfile(
       id: 'user-owner-1',
       displayName: 'Luís Ribeiro',
-      email: 'luis@testerloop.dev',
+      email: 'luis@testerswarm.dev',
       reputation: 0.96,
       integrityVerified: true,
       timezone: 'America/Sao_Paulo',
@@ -382,7 +382,7 @@ class HubController extends ChangeNotifier {
       description: shortDescription.trim(),
       category: category,
       playOptInUrl: playOptInUrl.trim(),
-      appKey: 'tl_pk_$suffix',
+      appKey: 'ts_pk_$suffix',
     );
     _myApps.insert(0, app);
     notifyListeners();
@@ -500,7 +500,7 @@ class HubController extends ChangeNotifier {
     final buf = StringBuffer()
       ..writeln('# Closed Testing Production Access Report — ${app.name}')
       ..writeln('- **Package:** `${app.packageName}`')
-      ..writeln('- **Verification:** TesterLoop SDK (SHA-256 TOFU: `${app.signingCertSha256 ?? "verified"}`)')
+      ..writeln('- **Verification:** Tester Swarm SDK (SHA-256 TOFU: `${app.signingCertSha256 ?? "verified"}`)')
       ..writeln('- **Requirement:** ${campaign?.requiredDays ?? 14} continuous days / ${campaign?.slots ?? 12} testers')
       ..writeln('- **Testers:** $completed completed · $active active')
       ..writeln('\n## Tester Feedback Summary');
@@ -523,7 +523,7 @@ class HubController extends ChangeNotifier {
           'App leve de finanças pessoais focado em privacidade, categorias personalizadas e exportação para planilhas.',
       category: 'Finanças',
       playOptInUrl: 'https://play.google.com/apps/testing/br.dev.fintrack',
-      appKey: 'tl_pk_fintrack991234abcd5678ef',
+      appKey: 'ts_pk_fintrack991234abcd5678ef',
       signingCertSha256: '3A:91:CC:10:88:7D:22:F1:44:9B:02:1E',
       sdkDebugOkAt: null,
       sdkVerifiedAt: null,
@@ -539,7 +539,7 @@ class HubController extends ChangeNotifier {
           'Ideal para sessões de deep work sem distrações, com histórico semanal e estatísticas por projeto.',
       category: 'Produtividade',
       playOptInUrl: 'https://play.google.com/apps/testing/io.focuspod.timer',
-      appKey: 'tl_pk_focuspod774411xyzw9988ab',
+      appKey: 'ts_pk_focuspod774411xyzw9988ab',
       signingCertSha256: '7C:12:AB:55:90:1F:8E:33:A2:4D:91:00',
     );
 
@@ -553,7 +553,7 @@ class HubController extends ChangeNotifier {
           'Lê boletos pela câmera mesmo em baixa luz e copia a linha digitável com 1 toque.',
       category: 'Utilitários',
       playOptInUrl: 'https://play.google.com/apps/testing/com.boletoscan.ocr',
-      appKey: 'tl_pk_boletoscan331122mnop4455',
+      appKey: 'ts_pk_boletoscan331122mnop4455',
       signingCertSha256: '9D:44:21:FE:11:09:6A:BC:77:88:23:1F',
     );
 
@@ -566,7 +566,7 @@ class HubController extends ChangeNotifier {
       description: 'App próprio cadastrado para validação do SDK e publicação.',
       category: 'Produtividade',
       playOptInUrl: 'https://play.google.com/apps/testing/dev.luisribeiro.habitoloop',
-      appKey: 'tl_pk_habitoloop1122334455667788',
+      appKey: 'ts_pk_habitoloop1122334455667788',
     );
 
     _myApps.add(myOwnedApp);

@@ -1,4 +1,4 @@
-# SPEC técnica — TesterLoop (nome provisório)
+# SPEC técnica — Tester Swarm (nome provisório)
 
 > **Status:** Rascunho v0.2 · **Data:** 2026-11-13
 > Complementa o [`PRD.md`](./PRD.md). Pontos de produto em aberto: **OQ-9** e **OQ-18** (PRD §12). Pontos técnicos em aberto: **TQ-n** (§15).
@@ -11,8 +11,8 @@
 flowchart LR
   subgraph Device["Dispositivo Android do testador"]
     HUB["App Hub (Flutter)<br/>+ módulo nativo Kotlin<br/>(TokenProvider, PresenceWorker)"]
-    TAPP["App testado<br/>+ TesterLoop SDK (Kotlin, Flutter ou React Native)"]
-    HUB -- "Intent io.testerloop.action.OPEN<br/>(extra: tracking token)" --> TAPP
+    TAPP["App testado<br/>+ Tester Swarm SDK (Kotlin, Flutter ou React Native)"]
+    HUB -- "Intent dev.testerswarm.action.OPEN<br/>(extra: tracking token)" --> TAPP
     TAPP -- "ContentProvider query<br/>(token ligado ao callingPackage)" --> HUB
   end
 
@@ -40,14 +40,14 @@ flowchart LR
 | App Hub | Flutter (Android no MVP, Flutter Web para o console na fase 2) | `apps/hub` |
 | SDK Android | Kotlin, AAR no Maven Central | `packages/sdk-android` |
 | Plugin Flutter | Plugin Flutter (só Android, no-op em outras plataformas) no pub.dev | `packages/sdk-flutter` |
-| Wrapper React Native | Pacote React Native (só Android, no-op em iOS/Web) no npm (`@testerloop/react-native`) | `packages/sdk-react-native` |
+| Wrapper React Native | Pacote React Native (só Android, no-op em iOS/Web) no npm (`@testerswarm/react-native`) | `packages/sdk-react-native` |
 | Backend | Supabase self-hosted em VPS (Postgres 15+, Edge Functions Deno/TS, Storage, Auth, pg_cron) | `backend/supabase` |
 | Push | Firebase Cloud Messaging | — |
 | Landing + Docs | Astro (SSG) + Starlight em `/docs` | `apps/landing` |
 
 **Monorepo** (sugerido) com **Melos** para os pacotes Dart:
 ```
-testerloop/
+testerswarm/
 ├─ apps/
 │  ├─ hub/                 # Flutter app
 │  └─ landing/             # Astro
@@ -131,7 +131,7 @@ create table apps (
   icon_path            text,
   screenshots          text[] default '{}',
   play_optin_url       text not null,                  -- https://play.google.com/apps/testing/<pkg>
-  app_key              text not null unique,           -- tl_pk_<random> (público)
+  app_key              text not null unique,           -- ts_pk_<random> (público)
   signing_cert_sha256  text,                           -- gravado na validação via Play (TOFU)
   sdk_debug_ok_at      timestamptz,
   sdk_verified_at      timestamptz,                    -- validação com build da Play
@@ -373,18 +373,18 @@ where b.status = 'confirmed' and now() <@ b.period order by b.slot_index;
   <uses-permission android:name="android.permission.INTERNET"/>
   <queries>
     <!-- Permite ao SDK consultar o provider do Hub -->
-    <provider android:authorities="io.testerloop.hub.token"/>
+    <provider android:authorities="dev.testerswarm.hub.token"/>
   </queries>
   <application>
     <!-- Trampolim: o Hub abre o app por aqui, passando o token; depois repassa para a launcher activity -->
     <activity
-      android:name="io.testerloop.sdk.internal.EntryActivity"
+      android:name="dev.testerswarm.sdk.internal.EntryActivity"
       android:exported="true"
       android:excludeFromRecents="true"
       android:noHistory="true"
       android:theme="@android:style/Theme.Translucent.NoTitleBar">
       <intent-filter>
-        <action android:name="io.testerloop.action.OPEN"/>
+        <action android:name="dev.testerswarm.action.OPEN"/>
         <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
@@ -394,7 +394,7 @@ where b.status = 'confirmed' and now() <@ b.period order by b.slot_index;
       android:authorities="${applicationId}.androidx-startup"
       android:exported="false"
       tools:node="merge">
-      <meta-data android:name="io.testerloop.sdk.internal.TesterLoopInitializer"
+      <meta-data android:name="dev.testerswarm.sdk.internal.TesterSwarmInitializer"
                  android:value="androidx.startup"/>
     </provider>
   </application>
@@ -405,21 +405,21 @@ where b.status = 'confirmed' and now() <@ b.period order by b.slot_index;
 ```xml
 <queries>
   <!-- Descobre TODOS os apps instalados que contêm o SDK, sem QUERY_ALL_PACKAGES -->
-  <intent><action android:name="io.testerloop.action.OPEN"/></intent>
+  <intent><action android:name="dev.testerswarm.action.OPEN"/></intent>
 </queries>
 <provider
   android:name=".tracker.TokenProvider"
-  android:authorities="io.testerloop.hub.token"
+  android:authorities="dev.testerswarm.hub.token"
   android:exported="true"/>
 ```
 
-- **Descoberta e presença:** `packageManager.queryIntentActivities(Intent("io.testerloop.action.OPEN"), 0)` lista os packages com SDK instalados. Um `PresenceWorker` (WorkManager, 1×/dia) envia essa lista para `/hub/v1/presence`. Isso detecta **desinstalação** mesmo quando o testador não abre o app.
+- **Descoberta e presença:** `packageManager.queryIntentActivities(Intent("dev.testerswarm.action.OPEN"), 0)` lista os packages com SDK instalados. Um `PresenceWorker` (WorkManager, 1×/dia) envia essa lista para `/hub/v1/presence`. Isso detecta **desinstalação** mesmo quando o testador não abre o app.
 - **Token por package:** `TokenProvider.query()` usa `callingPackage` (verificado pelo sistema) e devolve **apenas** o token da inscrição cujo `package_name == callingPackage`. Um app não consegue obter o token de outro.
 
 ### 4.3 Tracking token (JWT ES256, emitido pelo backend)
 ```json
 {
-  "iss": "testerloop", "aud": "sdk",
+  "iss": "testerswarm", "aud": "sdk",
   "sub": "<enrollment_id>",
   "pkg": "com.example.app",
   "kind": "tester | owner_validation",
@@ -454,7 +454,7 @@ sequenceDiagram
 ```json
 POST /sdk/v1/handshake
 {
-  "appKey": "tl_pk_8f3c...",
+  "appKey": "ts_pk_8f3c...",
   "packageName": "com.example.app",
   "versionCode": 42,
   "signingCertSha256": "AB:CD:...",
@@ -513,16 +513,16 @@ Resposta: `{"accepted":["e1","e2"], "enabled":true}`. O `id` garante idempotênc
 | Threads | Um único `Executor` em background. Nada na main thread além de registrar o observer. |
 | Falhas | Nunca lança exceção para o app hospedeiro: tudo fica em `runCatching` e loga só em debug. |
 | R8 | `consumer-rules.pro` incluído. |
-| Distribuição | Maven Central, coordenadas `io.testerloop:sdk:<ver>` (❓ OQ-18: depende do domínio). |
+| Distribuição | Maven Central, coordenadas `dev.testerswarm:sdk:<ver>` (❓ OQ-18: depende do domínio). |
 
 ### 5.2 API pública (opcional, para quem quiser)
 ```kotlin
-object TesterLoop {
+object TesterSwarm {
     /** Só necessário se o dev desativar o auto-init. */
     fun init(context: Context, appKey: String? = null)
 
     /** Estado para debug/UX: NOT_ENROLLED, TRACKING, DISABLED. */
-    fun status(context: Context): TesterLoopStatus
+    fun status(context: Context): TesterSwarmStatus
 
     /** Opt-out explícito (ex.: botão nas configurações do app). */
     fun setEnabled(context: Context, enabled: Boolean)
@@ -531,13 +531,13 @@ object TesterLoop {
 
 ### 5.3 Estrutura interna
 ```
-io.testerloop.sdk
-├─ TesterLoop.kt                 # fachada pública
+dev.testerswarm.sdk
+├─ TesterSwarm.kt                 # fachada pública
 └─ internal/
-   ├─ TesterLoopInitializer.kt   # androidx.startup.Initializer
+   ├─ TesterSwarmInitializer.kt   # androidx.startup.Initializer
    ├─ EntryActivity.kt           # trampolim (salva token, abre launcher)
    ├─ TokenStore.kt              # SharedPreferences privado
-   ├─ HubTokenClient.kt          # ContentResolver.query(io.testerloop.hub.token)
+   ├─ HubTokenClient.kt          # ContentResolver.query(dev.testerswarm.hub.token)
    ├─ SessionTracker.kt          # DefaultLifecycleObserver
    ├─ EventQueue.kt              # fila persistente (arquivo JSONL)
    ├─ ApiClient.kt               # HttpURLConnection + retries
@@ -549,33 +549,33 @@ io.testerloop.sdk
 
 ---
 
-## 6. Wrappers Multiplataforma: Flutter (`testerloop`) e React Native (`@testerloop/react-native`)
+## 6. Wrappers Multiplataforma: Flutter (`testerswarm`) e React Native (`@testerswarm/react-native`)
 
-### 6.1 Plugin Flutter (`testerloop`)
+### 6.1 Plugin Flutter (`testerswarm`)
 - Plugin **só Android** (`flutter.plugin.platforms.android`). Em iOS/Web/Desktop não registra nada, o que é seguro.
-- `android/build.gradle` declara `implementation("io.testerloop:sdk:<ver>")`. O merge de manifest traz tudo automaticamente.
+- `android/build.gradle` declara `implementation("dev.testerswarm:sdk:<ver>")`. O merge de manifest traz tudo automaticamente.
 - **Nenhum código Dart obrigatório.** A API Dart opcional espelha a nativa via `MethodChannel`:
 ```dart
-abstract final class TesterLoop {
-  static Future<TesterLoopStatus> status();
+abstract final class TesterSwarm {
+  static Future<TesterSwarmStatus> status();
   static Future<void> setEnabled(bool enabled);
 }
 ```
 - O `example/` serve também de app de teste de integração no CI (instala no emulador e verifica o handshake contra um backend mock).
 
-### 6.2 Wrapper React Native (`@testerloop/react-native`)
+### 6.2 Wrapper React Native (`@testerswarm/react-native`)
 - Pacote **só Android** via autolinking (`react-native.config.js` define `platforms.ios = null` para não registrar pod no iOS). Em iOS e Web, a API JS retorna valores seguros em no-op.
-- `android/build.gradle` declara `implementation("io.testerloop:sdk:<ver>")` e `minSdk = 23`. O Manifest merge injeta `androidx.startup` e `EntryActivity` automaticamente, tanto em React Native CLI quanto em Expo Dev Client (`npx expo prebuild`).
-- **Nenhum código JS/TS obrigatório.** A API opcional em JS/TS espelha a nativa via `NativeModules.TesterLoop`:
+- `android/build.gradle` declara `implementation("dev.testerswarm:sdk:<ver>")` e `minSdk = 23`. O Manifest merge injeta `androidx.startup` e `EntryActivity` automaticamente, tanto em React Native CLI quanto em Expo Dev Client (`npx expo prebuild`).
+- **Nenhum código JS/TS obrigatório.** A API opcional em JS/TS espelha a nativa via `NativeModules.TesterSwarm`:
 ```ts
-export type TesterLoopStatus = 'NOT_ENROLLED' | 'TRACKING' | 'DISABLED';
+export type TesterSwarmStatus = 'NOT_ENROLLED' | 'TRACKING' | 'DISABLED';
 
-export const TesterLoop = {
-  status(): Promise<TesterLoopStatus>;
+export const Tester Swarm = {
+  status(): Promise<TesterSwarmStatus>;
   setEnabled(enabled: boolean): Promise<void>;
 };
 ```
-- O `TesterLoop` nativo detecta automaticamente no classpath `io.testerloop.reactnative.TesterLoopPackage` (enviando `"wrapper": "react_native"`) ou `io.testerloop.flutter.TesterLoopPlugin` (`"wrapper": "flutter"`).
+- O `Tester Swarm` nativo detecta automaticamente no classpath `dev.testerswarm.reactnative.TesterSwarmPackage` (enviando `"wrapper": "react_native"`) ou `dev.testerswarm.flutter.TesterSwarmPlugin` (`"wrapper": "flutter"`).
 
 ---
 
@@ -586,10 +586,10 @@ Objetivo: qualquer assistente de IA (Claude, Copilot, Cursor etc.) deve consegui
 **Regras de redação:**
 1. Uma página por plataforma, com **passos numerados e determinísticos** ("abra o arquivo X, adicione exatamente Y").
 2. Blocos de código **completos e copiáveis**, com o caminho do arquivo no título.
-3. Uma seção de **verificação** com o resultado esperado (log `TesterLoop: TRACKING`).
+3. Uma seção de **verificação** com o resultado esperado (log `Tester Swarm: TRACKING`).
 4. Uma seção "**O que NÃO fazer**" (não chamar `init` duas vezes, não colocar o `appKey` em `strings.xml` se usar flavors etc.).
 5. Publicada em `/docs/sdk/android`, `/docs/sdk/flutter` e `/docs/sdk/react-native`, agregada em **`/llms.txt`** (índice) e **`/llms-full.txt`** (conteúdo completo em Markdown puro).
-6. O Hub gera um **prompt pronto** com o `appKey` do dev já preenchido: *"Integre o TesterLoop SDK neste projeto seguindo https://…/llms-full.txt. appKey: tl_pk_…"*.
+6. O Hub gera um **prompt pronto** com o `appKey` do dev já preenchido: *"Integre o Tester Swarm SDK neste projeto seguindo https://…/llms-full.txt. appKey: ts_pk_…"*.
 
 O rascunho do documento está em [`SDK_AI_INSTALL.md`](./SDK_AI_INSTALL.md).
 
@@ -601,7 +601,7 @@ O rascunho do documento está em [`SDK_AI_INSTALL.md`](./SDK_AI_INSTALL.md).
 | Necessidade | Escolha |
 |---|---|
 | Estado/DI | `flutter_riverpod` + `riverpod_generator` (❓ TQ-1: ou Bloc, conforme preferência do time) |
-| Navegação | `go_router` (deep links `testerloop://campaign/<id>` e App Links `https://<domínio>/c/<id>`) |
+| Navegação | `go_router` (deep links `testerswarm://campaign/<id>` e App Links `https://<domínio>/c/<id>`) |
 | Modelos | `freezed` + `json_serializable` |
 | Backend | `supabase_flutter` (auth, RPC, realtime para status de inscrição) |
 | Auth | `google_sign_in` → `signInWithIdToken` no Supabase |
@@ -630,7 +630,7 @@ lib/
    └─ settings/          # conta, exclusão, privacidade
 android/app/src/main/kotlin/.../tracker/
 ├─ TokenProvider.kt      # ContentProvider exportado (callingPackage)
-├─ TrackedAppsScanner.kt # queryIntentActivities(io.testerloop.action.OPEN)
+├─ TrackedAppsScanner.kt # queryIntentActivities(dev.testerswarm.action.OPEN)
 ├─ PresenceWorker.kt     # WorkManager diário → /hub/v1/presence
 ├─ IntegrityClient.kt
 └─ HubNativePlugin.kt    # MethodChannel: listTrackedApps, launchWithToken, integrityToken
@@ -766,7 +766,7 @@ Regras: só campanhas `recruiting`/`in_progress`. Máximo de 1 booking ativo por
 Texto sugerido para o Data Safety **do app que integra o SDK**:
 | Categoria | Coletado | Compartilhado | Finalidade | Opcional |
 |---|---|---|---|---|
-| Atividade no app → Interações com o app | Sim | Não (o TesterLoop atua como prestador de serviço) | Análise (verificação de teste) | Só ativo para testadores inscritos |
+| Atividade no app → Interações com o app | Sim | Não (o Tester Swarm atua como prestador de serviço) | Análise (verificação de teste) | Só ativo para testadores inscritos |
 | IDs do dispositivo ou outros IDs | Sim (ID de instalação aleatório) | Não | Análise / prevenção de fraude | idem |
 | Criptografado em trânsito | Sim | | | |
 
@@ -783,7 +783,7 @@ Outros itens: exclusão de conta no app e em `/delete-account`, retenção de `s
 | Plugin Flutter | `example/` com integration test no emulador. |
 | Wrapper React Native | Testes unitários Node/JS (no-op iOS/Web + bridge Android) e módulo nativo Android autolinked. |
 | Backend | Testes SQL (pgTAP) para ledger, jobs e RLS. Testes Deno para Edge Functions. |
-| CD | GitHub Actions: Hub → Play (internal → closed → prod) via Fastlane. SDK → Maven Central (`vanniktech/gradle-maven-publish-plugin`). Plugin → pub.dev (publicação automatizada via OIDC). Wrapper RN → npm (`@testerloop/react-native`). Landing → deploy em cada push na `main`. Migrations & Edge Functions → deploy contínuo para a instância Supabase na VPS (`supabase db push` / SSH). |
+| CD | GitHub Actions: Hub → Play (internal → closed → prod) via Fastlane. SDK → Maven Central (`vanniktech/gradle-maven-publish-plugin`). Plugin → pub.dev (publicação automatizada via OIDC). Wrapper RN → npm (`@testerswarm/react-native`). Landing → deploy em cada push na `main`. Migrations & Edge Functions → deploy contínuo para a instância Supabase na VPS (`supabase db push` / SSH). |
 | Observabilidade | Sentry (Hub + Edge Functions), logs estruturados, dashboards: handshakes/dia, taxa de erro do SDK, inscrições ativas, tempo até preencher vagas. |
 
 ---

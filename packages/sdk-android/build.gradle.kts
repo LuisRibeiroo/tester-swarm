@@ -3,11 +3,11 @@ plugins {
     id("org.jetbrains.kotlin.android") version "2.0.20"
 }
 
-group = "io.testerloop"
+group = "dev.testerswarm"
 version = "1.0.0"
 
 android {
-    namespace = "io.testerloop.sdk"
+    namespace = "dev.testerswarm.sdk"
     compileSdk = 35
 
     defaultConfig {

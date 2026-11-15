@@ -1,21 +1,21 @@
-import { TesterLoop } from '@testerloop/react-native';
+import { TesterSwarm } from '@testerswarm/react-native';
 import simulatorPkg from './simulator.js';
 
 const {
-  createTesterLoop,
+  createTesterSwarm,
   createSimulatedAndroidBridge,
   createLoopSimulator,
   runLiveServerScenario,
 } = simulatorPkg;
 
 async function main() {
-  // 1. Call the real imported @testerloop/react-native singleton (safe no-op outside Android runtime)
-  const runtimeStatus = await TesterLoop.status();
-  console.log(`[1/5] Runtime import (@testerloop/react-native) outside Android -> ${runtimeStatus}`);
+  // 1. Call the real imported @testerswarm/react-native singleton (safe no-op outside Android runtime)
+  const runtimeStatus = await TesterSwarm.status();
+  console.log(`[1/5] Runtime import (@testerswarm/react-native) outside Android -> ${runtimeStatus}`);
 
   // 2. Wire package factory against a simulated Android bridge and step through 12x14 lifecycle
   const bridge = createSimulatedAndroidBridge();
-  const androidSdk = createTesterLoop(bridge.getBridge);
+  const androidSdk = createTesterSwarm(bridge.getBridge);
   const sim = createLoopSimulator(androidSdk);
 
   console.log(`[2/5] Boot (${sim.getCurrentPhase().name}) -> ${await sim.readStatus()}`);
@@ -29,11 +29,11 @@ async function main() {
   const s3 = await sim.advance(bridge);
   console.log(`[5/5] ${s3.phase.name} -> ${s3.status} (${s3.phase.summary})`);
 
-  const apiUrl = process.env.TESTERLOOP_API_URL?.trim();
+  const apiUrl = process.env.TESTERSWARM_API_URL?.trim();
   if (apiUrl) {
-    const appKey = process.env.TESTERLOOP_APP_KEY?.trim() || 'tl_pk_example_rn_0001';
-    const packageName = process.env.TESTERLOOP_PACKAGE_NAME?.trim() || 'io.testerloop.example.rn';
-    const token = process.env.TESTERLOOP_TRACKING_TOKEN?.trim() || 'demo-tracking-token';
+    const appKey = process.env.TESTERSWARM_APP_KEY?.trim() || 'ts_pk_example_rn_0001';
+    const packageName = process.env.TESTERSWARM_PACKAGE_NAME?.trim() || 'dev.testerswarm.example.rn';
+    const token = process.env.TESTERSWARM_TRACKING_TOKEN?.trim() || 'demo-tracking-token';
 
     console.log(`[live] Running live server scenario against ${apiUrl}`);
     const live = await runLiveServerScenario({ apiUrl, appKey, packageName, token });

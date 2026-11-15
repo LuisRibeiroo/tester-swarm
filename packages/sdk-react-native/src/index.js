@@ -6,7 +6,7 @@ function loadReactNativeBridge() {
     const rn = require('react-native');
     return {
       platformOS: rn && rn.Platform ? rn.Platform.OS : undefined,
-      nativeModule: rn && rn.NativeModules ? rn.NativeModules.TesterLoop : undefined,
+      nativeModule: rn && rn.NativeModules ? rn.NativeModules.TesterSwarm : undefined,
     };
   } catch {
     return { platformOS: undefined, nativeModule: undefined };
@@ -18,10 +18,10 @@ function normalizeStatus(value) {
 }
 
 /**
- * Creates a TesterLoop facade backed by a custom platform/bridge resolver.
- * Primarily exported for unit testing; host apps should use `TesterLoop`.
+ * Creates a TesterSwarm facade backed by a custom platform/bridge resolver.
+ * Primarily exported for unit testing; host apps should use `TesterSwarm`.
  */
-function createTesterLoop(getBridge = loadReactNativeBridge) {
+function createTesterSwarm(getBridge = loadReactNativeBridge) {
   return {
     async status() {
       try {
@@ -50,8 +50,8 @@ function createTesterLoop(getBridge = loadReactNativeBridge) {
   };
 }
 
-const TesterLoop = createTesterLoop();
+const TesterSwarm = createTesterSwarm();
 
-exports.TesterLoop = TesterLoop;
-exports.createTesterLoop = createTesterLoop;
-exports.default = TesterLoop;
+exports.TesterSwarm = TesterSwarm;
+exports.createTesterSwarm = createTesterSwarm;
+exports.default = TesterSwarm;

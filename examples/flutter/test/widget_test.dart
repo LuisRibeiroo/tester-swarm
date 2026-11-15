@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:testerloop_flutter_example/main.dart';
+import 'package:testerswarm_flutter_example/main.dart';
 
 void main() {
-  const channel = MethodChannel('io.testerloop/sdk');
+  const channel = MethodChannel('dev.testerswarm/sdk');
 
-  testWidgets('imports testerloop package and simulates 12x14 lifecycle',
+  testWidgets('imports testerswarm package and simulates 12x14 lifecycle',
       (tester) async {
     var enabled = true;
     var wireStatus = 'NOT_ENROLLED';
@@ -28,7 +28,7 @@ void main() {
     });
 
     try {
-      await tester.pumpWidget(const TesterLoopExampleApp());
+      await tester.pumpWidget(const TesterSwarmExampleApp());
       await tester.pumpAndSettle();
 
       expect(find.text('Bridge status: notEnrolled'), findsOneWidget);

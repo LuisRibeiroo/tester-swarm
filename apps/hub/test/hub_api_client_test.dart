@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:testerloop_hub/core/api/hub_api_client.dart';
-import 'package:testerloop_hub/core/native/hub_native_channel.dart';
-import 'package:testerloop_hub/core/state/hub_controller.dart';
+import 'package:testerswarm_hub/core/api/hub_api_client.dart';
+import 'package:testerswarm_hub/core/native/hub_native_channel.dart';
+import 'package:testerswarm_hub/core/state/hub_controller.dart';
 
 class _RealHttpOverrides extends HttpOverrides {}
 
@@ -167,7 +167,7 @@ void main() {
 
   test('HubNativeChannel calls saveTrackingToken before launchWithToken on Android',
       () async {
-    const channel = MethodChannel('io.testerloop.hub/native');
+    const channel = MethodChannel('dev.testerswarm.hub/native');
     final recordedCalls = <({String method, Object? arguments})>[];
     final messenger =
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;

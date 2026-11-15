@@ -2,13 +2,13 @@
     <application
         android:name=".MainApplication"
         android:allowBackup="false"
-        android:label="TesterLoop React Native Example"
+        android:label="Tester Swarm React Native Example"
         android:usesCleartextTraffic="true">
         <meta-data
-            android:name="io.testerloop.APP_KEY"
-            android:value="tl_pk_example_rn_0001" />
+            android:name="dev.testerswarm.APP_KEY"
+            android:value="ts_pk_example_rn_0001" />
         <meta-data
-            android:name="io.testerloop.API_URL"
+            android:name="dev.testerswarm.API_URL"
             android:value="http://10.0.2.2:54321/functions/v1" />
 
         <activity

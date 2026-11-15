@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-/// Explicit error raised when a TesterLoop Hub API request fails.
+/// Explicit error raised when a Tester Swarm Hub API request fails.
 class HubApiException implements Exception {
   final int statusCode;
   final String code;
@@ -20,7 +20,7 @@ class HubApiException implements Exception {
       'HubApiException(statusCode: $statusCode, code: $code, message: $message)';
 }
 
-/// Lightweight HTTP client for TesterLoop Hub Edge Functions and local server.
+/// Lightweight HTTP client for Tester Swarm Hub Edge Functions and local server.
 class HubApiClient {
   final String baseUrl;
   final String? authToken;

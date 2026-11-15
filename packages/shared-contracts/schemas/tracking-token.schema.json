@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://testerloop.io/schemas/tracking-token.schema.json",
-  "title": "TesterLoop Tracking Token JWT Claims",
+  "$id": "https://testerswarm.dev/schemas/tracking-token.schema.json",
+  "title": "TesterSwarm Tracking Token JWT Claims",
   "type": "object",
   "required": ["iss", "aud", "sub", "pkg", "kind", "tz", "iat", "exp"],
   "additionalProperties": false,
   "properties": {
     "iss": {
-      "const": "testerloop"
+      "const": "testerswarm"
     },
     "aud": {
       "const": "sdk"

@@ -1,5 +1,5 @@
 {
-  "name": "testerloop-react-native-example",
+  "name": "testerswarm-react-native-example",
   "version": "1.0.0",
   "private": true,
   "packageManager": "pnpm@10.33.0",
@@ -8,6 +8,6 @@
     "test": "node --test test/app.test.mjs"
   },
   "dependencies": {
-    "@testerloop/react-native": "file:../../packages/sdk-react-native"
+    "@testerswarm/react-native": "file:../../packages/sdk-react-native"
   }
 }

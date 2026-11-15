@@ -8,11 +8,11 @@ import {
   Text,
   View,
 } from 'react-native';
-import { TesterLoop } from '@testerloop/react-native';
+import { TesterSwarm } from '@testerswarm/react-native';
 import { createLoopSimulator } from './simulator';
 
 export default function App() {
-  const simulatorRef = useRef(createLoopSimulator(TesterLoop));
+  const simulatorRef = useRef(createLoopSimulator(TesterSwarm));
   const [status, setStatus] = useState('NOT_ENROLLED');
   const [enabled, setEnabled] = useState(true);
   const [phase, setPhase] = useState(simulatorRef.current.getCurrentPhase());
@@ -22,9 +22,9 @@ export default function App() {
     setLogs((prev) => [`${line}`, ...prev].slice(0, 8));
 
   useEffect(() => {
-    TesterLoop.status().then((initial) => {
+    TesterSwarm.status().then((initial) => {
       setStatus(initial);
-      appendLog(`Boot: TesterLoop.status() -> ${initial}`);
+      appendLog(`Boot: TesterSwarm.status() -> ${initial}`);
     });
   }, []);
 
@@ -32,7 +32,7 @@ export default function App() {
     setEnabled(next);
     const updated = await simulatorRef.current.setEnabled(next);
     setStatus(updated);
-    appendLog(`TesterLoop.setEnabled(${next}) -> ${updated}`);
+    appendLog(`TesterSwarm.setEnabled(${next}) -> ${updated}`);
   };
 
   const handleAdvance = async () => {
@@ -46,9 +46,9 @@ export default function App() {
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>TesterLoop React Native Example</Text>
+        <Text style={styles.title}>TesterSwarm React Native Example</Text>
         <View style={styles.card}>
-          <Text style={styles.label}>Bridge status (@testerloop/react-native):</Text>
+          <Text style={styles.label}>Bridge status (@testerswarm/react-native):</Text>
           <Text style={styles.value}>{status}</Text>
           <Text style={styles.label}>Fase simulada: {phase.expectedStatus}</Text>
           <Text style={styles.muted}>{phase.summary}</Text>
